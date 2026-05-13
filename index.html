@@ -3,59 +3,64 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>女明星生图</title>
-  <meta name="description" content="低成本图片图集展示站" />
+  <title>明星生图预览</title>
+  <meta name="description" content="明星活动图、生图、写真预览站" />
   <link rel="stylesheet" href="/assets/style.css" />
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="logo" href="/">我的图集站</a>
-      <nav>
-        <a href="/">首页</a>
-        <a href="#categories">分类</a>
-        <a href="#about">联系</a>
-      </nav>
+  <div class="page-bg"></div>
+
+  <header class="top-hero">
+    <div class="avatar">
+      <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&auto=format&fit=crop" alt="站点头像">
     </div>
+    <h1>明星生图预览</h1>
+    <p>合作加微信/QQ：ruyaorumo</p>
   </header>
 
+  <nav class="nav-card">
+    <a href="/" class="active">首页</a>
+    <a href="#categories">分类</a>
+    <a href="#archive">本站归档</a>
+    <a href="#links">更多网站</a>
+    <a href="#about">关于</a>
+    <button id="searchToggle" class="icon-btn" aria-label="搜索">⌕</button>
+    <button id="themeToggle" class="icon-btn" aria-label="切换主题">◐</button>
+  </nav>
+
   <main class="container">
-    <section class="hero">
-      <h1>图片预览 / 图集展示</h1>
-      <p>这是一个使用 GitHub + Cloudflare Pages 免费部署的静态图片站模板。</p>
-      <div class="search-box">
-        <input id="searchInput" placeholder="搜索标题、分类或标签..." />
-      </div>
+    <section id="searchPanel" class="search-panel">
+      <input id="searchInput" placeholder="搜索标题、分类或标签..." />
     </section>
 
-    <section class="stats">
-      <div><strong id="postCount">0</strong><span>图集</span></div>
-      <div><strong id="categoryCount">0</strong><span>分类</span></div>
-      <div><strong id="tagCount">0</strong><span>标签</span></div>
+    <section class="stats-row">
+      <div class="stat-card"><strong id="postCount">0</strong><span>图集</span></div>
+      <div class="stat-card"><strong id="categoryCount">0</strong><span>分类</span></div>
+      <div class="stat-card"><strong id="tagCount">0</strong><span>标签</span></div>
     </section>
 
-    <section id="categories" class="filter-wrap">
-      <button class="filter active" data-category="全部">全部</button>
+    <section id="categories" class="category-bar">
+      <button class="category-pill active" data-category="全部">全部</button>
     </section>
 
-    <section id="postGrid" class="grid"></section>
+    <section id="postGrid" class="masonry-grid"></section>
 
-    <section id="about" class="about">
-      <h2>联系</h2>
-      <p>这里可以放你的联系方式、投稿说明、版权说明或合作说明。</p>
+    <section id="about" class="about-card">
+      <h2>关于本站</h2>
+      <p>本站用于图集预览展示。请确认上传的图片拥有版权或授权，避免使用未授权图片。</p>
     </section>
   </main>
 
   <div id="notice" class="notice">
     <div class="notice-card">
       <button id="closeNotice" aria-label="关闭">×</button>
-      <h3>提示</h3>
-      <p>本站仅作图片预览展示，请确保你上传的图片拥有版权或授权。</p>
+      <h3>温馨提示</h3>
+      <p>本站仅作图片预览展示。请勿上传侵犯版权、肖像权或平台规则的内容。</p>
     </div>
   </div>
 
   <footer class="footer">
-    <div class="container">© <span id="year"></span> 我的图集站</div>
+    © <span id="year"></span> 明星生图预览
   </footer>
 
   <script src="/assets/app.js"></script>
