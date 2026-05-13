@@ -3,6 +3,9 @@ let galleries = [];
 let site = {};
 let currentIndex = 0;
 
+let draggedGalleryIndex = null;
+let draggedImageIndex = null;
+
 function toast(msg) {
   const el = document.querySelector("#toast");
   el.textContent = msg;
@@ -109,15 +112,73 @@ function renderList() {
   const list = document.querySelector("#galleryList");
 
   list.innerHTML = galleries.map((g, i) => `
-    <div class="gallery-item ${i === currentIndex ? "active" : ""}" onclick="selectGallery(${i})">
-      <div class="thumb"><img src="${g.cover || ""}" loading="lazy" decoding="async"></div>
+    <div
+      class="gallery-item ${i === currentIndex ? "active" : ""}"
+      draggable="true"
+      onclick="selectGallery(${i})"
+      ondragstart="handleGalleryDragStart(event, ${i})"
+      ondragover="handleGalleryDragOver(event)"
+      ondrop="handleGalleryDrop(event, ${i})"
+      ondragend="handleGalleryDragEnd(event)"
+      title="按住拖动可以调整图集顺序"
+      style="cursor:grab"
+    >
+      <div class="thumb">
+        <img src="${g.cover || ""}" loading="lazy" decoding="async">
+      </div>
       <div class="gallery-info">
         <strong>${g.title || "未命名图集"}</strong>
         <span>${g.category || ""} · ${g.date || ""} · ${(g.images || []).length} 张</span>
       </div>
-      <span class="badge">编辑</span>
+      <span class="badge">拖动</span>
     </div>
   `).join("");
+}
+
+function handleGalleryDragStart(event, index) {
+  draggedGalleryIndex = index;
+  event.currentTarget.style.opacity = "0.45";
+  event.currentTarget.style.cursor = "grabbing";
+
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", String(index));
+  }
+}
+
+function handleGalleryDragOver(event) {
+  event.preventDefault();
+  if (event.dataTransfer) event.dataTransfer.dropEffect = "move";
+}
+
+async function handleGalleryDrop(event, targetIndex) {
+  event.preventDefault();
+
+  if (draggedGalleryIndex === null) return;
+  if (draggedGalleryIndex === targetIndex) return;
+
+  const moved = galleries.splice(draggedGalleryIndex, 1)[0];
+  galleries.splice(targetIndex, 0, moved);
+
+  currentIndex = targetIndex;
+  draggedGalleryIndex = null;
+
+  renderList();
+  selectGallery(currentIndex);
+
+  try {
+    await saveGalleries();
+    toast("图集顺序已调整并保存");
+  } catch (err) {
+    logDebug("图集排序保存失败：\n" + err.message);
+    toast("图集排序保存失败：" + err.message);
+  }
+}
+
+function handleGalleryDragEnd(event) {
+  draggedGalleryIndex = null;
+  event.currentTarget.style.opacity = "1";
+  event.currentTarget.style.cursor = "grab";
 }
 
 function selectGallery(index) {
@@ -152,13 +213,73 @@ function syncForm() {
 
 function renderImages() {
   const g = galleries[currentIndex];
+  if (!g) return;
 
-  document.querySelector("#detailPreview").innerHTML = (g.images || []).map((src, i) => `
-    <div class="image-card">
+  if (!Array.isArray(g.images)) g.images = [];
+
+  document.querySelector("#detailPreview").innerHTML = g.images.map((src, i) => `
+    <div
+      class="image-card"
+      draggable="true"
+      ondragstart="handleImageDragStart(event, ${i})"
+      ondragover="handleImageDragOver(event)"
+      ondrop="handleImageDrop(event, ${i})"
+      ondragend="handleImageDragEnd(event)"
+      title="按住拖动可以调整图片顺序"
+      style="cursor:grab"
+    >
       <img src="${src}" loading="lazy" decoding="async">
       <button onclick="removeImage(${i})">×</button>
     </div>
   `).join("");
+}
+
+function handleImageDragStart(event, index) {
+  draggedImageIndex = index;
+  event.currentTarget.style.opacity = "0.45";
+  event.currentTarget.style.cursor = "grabbing";
+
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", String(index));
+  }
+}
+
+function handleImageDragOver(event) {
+  event.preventDefault();
+  if (event.dataTransfer) event.dataTransfer.dropEffect = "move";
+}
+
+async function handleImageDrop(event, targetIndex) {
+  event.preventDefault();
+
+  const g = galleries[currentIndex];
+  if (!g || !Array.isArray(g.images)) return;
+
+  if (draggedImageIndex === null) return;
+  if (draggedImageIndex === targetIndex) return;
+
+  const moved = g.images.splice(draggedImageIndex, 1)[0];
+  g.images.splice(targetIndex, 0, moved);
+
+  draggedImageIndex = null;
+
+  renderImages();
+  renderList();
+
+  try {
+    await saveGalleries();
+    toast("图片顺序已调整并保存");
+  } catch (err) {
+    logDebug("图片排序保存失败：\n" + err.message);
+    toast("图片排序保存失败：" + err.message);
+  }
+}
+
+function handleImageDragEnd(event) {
+  draggedImageIndex = null;
+  event.currentTarget.style.opacity = "1";
+  event.currentTarget.style.cursor = "grab";
 }
 
 async function saveGalleries() {
@@ -182,6 +303,7 @@ async function saveGalleries() {
   } catch (err) {
     logDebug("保存图集失败：\n" + err.message);
     toast("保存失败：" + err.message);
+    throw err;
   }
 }
 
@@ -216,13 +338,19 @@ async function deleteGallery() {
 }
 
 function removeImage(i) {
-  galleries[currentIndex].images.splice(i, 1);
+  const g = galleries[currentIndex];
+  if (!g || !Array.isArray(g.images)) return;
+
+  g.images.splice(i, 1);
   renderImages();
   renderList();
 }
 
 function clearImages() {
-  galleries[currentIndex].images = [];
+  const g = galleries[currentIndex];
+  if (!g) return;
+
+  g.images = [];
   renderImages();
   renderList();
 }
