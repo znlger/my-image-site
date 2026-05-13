@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>可视化后台 - 女明星生图</title>
+  <link rel="stylesheet" href="./assets/style.css" />
+</head>
+<body>
+  <header class="site-top">
+    <a class="brand" href="./index.html">
+      <span class="brand-mark">女</span>
+      <span><strong>女明星生图后台</strong><em>Visual Admin</em></span>
+    </a>
+    <nav class="top-nav">
+      <a href="./index.html">看网站</a>
+      <a href="./admin.html" class="active">后台</a>
+    </nav>
+  </header>
+
+  <section id="loginCard" class="login-card">
+    <span class="eyebrow">Admin Login</span>
+    <h1 style="margin:0 0 12px">输入管理员密码</h1>
+    <p class="hint">这个密码需要在 Cloudflare Pages 里设置为环境变量 ADMIN_PASSWORD。</p>
+    <div class="field">
+      <label>管理员密码</label>
+      <input id="passwordInput" type="password" placeholder="输入密码">
+    </div>
+    <button class="btn btn-primary" id="loginBtn">进入后台</button>
+  </section>
+
+  <main id="adminApp" class="admin-layout hidden">
+    <aside>
+      <section class="panel">
+        <div class="panel-head">
+          <h2>网站设置</h2>
+          <button class="btn btn-soft" id="saveSiteBtn">保存</button>
+        </div>
+        <div class="panel-body">
+          <div class="field"><label>网站名称</label><input id="siteName"></div>
+          <div class="field"><label>首页第一行标题</label><input id="title1"></div>
+          <div class="field"><label>首页第二行标题</label><input id="title2"></div>
+          <div class="field"><label>首页说明文字</label><textarea id="description"></textarea></div>
+          <p class="hint">修改后点击保存，前台网站会自动读取最新内容。</p>
+        </div>
+      </section>
+
+      <section class="panel" style="margin-top:24px">
+        <div class="panel-head">
+          <h2>图集列表</h2>
+          <button class="btn btn-primary" id="addGalleryBtn">+ 新增</button>
+        </div>
+        <div class="panel-body">
+          <div id="galleryList" class="gallery-list"></div>
+        </div>
+      </section>
+    </aside>
+
+    <section>
+      <section class="panel">
+        <div class="panel-head">
+          <h2>编辑图集</h2>
+          <div class="btn-row" style="margin:0">
+            <button class="btn btn-danger" id="deleteGalleryBtn">删除</button>
+            <button class="btn btn-primary" id="saveGalleryBtn">保存图集</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="editor-grid">
+            <div>
+              <div class="field"><label>图集 ID</label><input id="galleryId" disabled></div>
+              <div class="field"><label>图集标题</label><input id="galleryTitle"></div>
+              <div class="field">
+                <label>分类</label>
+                <select id="galleryCategory">
+                  <option>活动</option><option>写真</option><option>街拍</option><option>红毯</option><option>路透</option>
+                </select>
+              </div>
+              <div class="field"><label>日期</label><input id="galleryDate"></div>
+              <div class="field"><label>标签</label><input id="galleryTags"><p class="hint">多个标签用逗号分隔，例如：赵露思,红毯,生图</p></div>
+            </div>
+            <div>
+              <div class="drop">
+                <input id="coverFile" type="file" accept="image/*">
+                <div><strong>上传/替换封面图</strong><span>会自动命名并上传到 R2</span></div>
+              </div>
+              <div class="preview-cover"><img id="coverPreview" src=""></div>
+            </div>
+          </div>
+
+          <div style="margin-top:24px">
+            <div class="drop">
+              <input id="detailFiles" type="file" accept="image/*" multiple>
+              <div><strong>上传详情页图片，可一次选择多张</strong><span>会自动命名并上传到 R2</span></div>
+            </div>
+            <div id="detailPreview" class="image-grid"></div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-soft" id="moveImageBtn">调整顺序</button>
+            <button class="btn btn-danger" id="clearImagesBtn">清空详情图</button>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+  <script src="./assets/admin-live.js"></script>
+</body>
+</html>

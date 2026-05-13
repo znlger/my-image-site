@@ -1,67 +1,50 @@
-const posts = [
-  {
-    title: "红毯活动生图预览",
-    category: "活动",
-    date: "5天前",
-    count: 6,
-    cover: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=900&auto=format&fit=crop",
-    url: "/posts/sample-01.html",
-    tags: ["活动", "生图", "高清"]
-  },
-  {
-    title: "白裙现场图集",
-    category: "写真",
-    date: "5天前",
-    count: 4,
-    cover: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&auto=format&fit=crop",
-    url: "/posts/sample-02.html",
-    tags: ["写真", "预览"]
-  },
-  {
-    title: "近景高清图",
-    category: "街拍",
-    date: "5天前",
-    count: 5,
-    cover: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=900&auto=format&fit=crop",
-    url: "/posts/sample-03.html",
-    tags: ["街拍", "高清"]
-  },
-  {
-    title: "舞台造型图",
-    category: "活动",
-    date: "6天前",
-    count: 8,
-    cover: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=900&auto=format&fit=crop",
-    url: "/posts/sample-04.html",
-    tags: ["舞台", "现场"]
-  },
-  {
-    title: "城市街拍合集",
-    category: "街拍",
-    date: "7天前",
-    count: 9,
-    cover: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900&auto=format&fit=crop",
-    url: "/posts/sample-05.html",
-    tags: ["街拍", "城市"]
-  },
-  {
-    title: "暖色调写真预览",
-    category: "写真",
-    date: "8天前",
-    count: 7,
-    cover: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=900&auto=format&fit=crop",
-    url: "/posts/sample-06.html",
-    tags: ["写真", "暖色"]
-  }
-];
-
+let posts = [];
+let site = {};
 let currentCategory = "全部";
 
-function renderStack() {
+async function safeJson(url, fallback) {
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error(res.status);
+    return await res.json();
+  } catch {
+    return fallback;
+  }
+}
+
+async function loadData() {
+  site = await safeJson("./api/site", null);
+  if (!site) site = await safeJson("./data/site.json", {});
+  posts = await safeJson("./api/galleries", null);
+  if (!posts) posts = await safeJson("./data/galleries.json", []);
+}
+
+function countImages(p) {
+  return Array.isArray(p.images) ? p.images.length : 0;
+}
+
+function applySite() {
+  const siteName = site.siteName || "女明星生图";
+  const brandName = document.querySelector("#brandName");
+  const footerName = document.querySelector("#footerName");
+  const title1 = document.querySelector("#title1");
+  const title2 = document.querySelector("#title2");
+  const desc = document.querySelector("#siteDesc");
+
+  if (brandName) brandName.textContent = siteName;
+  if (footerName) footerName.textContent = siteName;
+  if (title1) title1.textContent = site.title1 || "精选女明星生图";
+  if (title2) title2.textContent = site.title2 || "高清原图预览";
+  if (desc) desc.innerHTML = (site.description || "").replace(/\n/g, "<br>");
+}
+
+function renderStackIfExist() {
   const stack = document.querySelector("#coverStack");
+  if (!stack) return;
+
   const topFive = posts.slice(0, 5);
   stack.innerHTML = topFive.map((p, index) => `
-    <a class="stack-card c${index + 1}" href="${p.url}">
+    <a class="stack-card c${index + 1}" href="./gallery.html?id=${encodeURIComponent(p.id)}">
       <img src="${p.cover}" alt="${p.title}">
     </a>
   `).join("") + `
@@ -75,17 +58,10 @@ function renderStack() {
   `;
 }
 
-function renderStats() {
-  const categories = [...new Set(posts.map(p => p.category))];
-  const tags = [...new Set(posts.flatMap(p => p.tags))];
-  document.querySelector("#postCount").textContent = posts.length;
-  document.querySelector("#categoryCount").textContent = categories.length;
-  document.querySelector("#tagCount").textContent = tags.length;
-}
-
-function renderFilters() {
+function renderFiltersIfExist() {
   const wrap = document.querySelector("#categories");
-  const categories = [...new Set(posts.map(p => p.category))];
+  if (!wrap) return;
+  const categories = [...new Set(posts.map(p => p.category).filter(Boolean))];
 
   categories.forEach(cat => {
     const btn = document.createElement("button");
@@ -96,61 +72,97 @@ function renderFilters() {
 
   wrap.addEventListener("click", e => {
     if (!e.target.matches("button")) return;
-    document.querySelectorAll(".cats button").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll("#categories button").forEach(b => b.classList.remove("active"));
     e.target.classList.add("active");
     currentCategory = e.target.dataset.category;
-    renderPosts();
+    renderPostsIfExist();
   });
 }
 
-function renderPosts() {
+function renderPostsIfExist() {
+  const grid = document.querySelector("#postGrid");
+  if (!grid) return;
+
   const searchEl = document.querySelector("#searchInput");
   const q = searchEl ? searchEl.value.trim().toLowerCase() : "";
-  const grid = document.querySelector("#postGrid");
 
   const filtered = posts.filter(p => {
     const matchCategory = currentCategory === "全部" || p.category === currentCategory;
-    const text = [p.title, p.category, ...p.tags].join(" ").toLowerCase();
+    const text = [p.title, p.category, ...(p.tags || [])].join(" ").toLowerCase();
     const matchSearch = !q || text.includes(q);
     return matchCategory && matchSearch;
   });
 
   grid.innerHTML = filtered.map(p => `
-    <a class="gallery-card" href="${p.url}">
+    <a class="gallery-card" href="./gallery.html?id=${encodeURIComponent(p.id)}">
       <img src="${p.cover}" alt="${p.title}" loading="lazy">
       <div class="card-top">
-        <span class="badge">${p.date}</span>
-        <span class="badge">◉ ${p.count}</span>
+        <span class="badge">${p.date || ""}</span>
+        <span class="badge">◉ ${countImages(p)}</span>
       </div>
       <div class="card-content">
         <h2>${p.title}</h2>
         <div class="card-meta">
-          <span>${p.category}</span>
-          <span>${p.count} 张</span>
+          <span>${p.category || ""}</span>
+          <span>${countImages(p)} 张</span>
         </div>
       </div>
     </a>
   `).join("");
 
-  if (!filtered.length) {
-    grid.innerHTML = "<p>没有找到相关图集。</p>";
+  if (!filtered.length) grid.innerHTML = "<p>没有找到相关图集。</p>";
+}
+
+function renderGalleryDetailIfExist() {
+  const head = document.querySelector("#galleryHead");
+  const imagesWrap = document.querySelector("#galleryImages");
+  if (!head || !imagesWrap) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  const gallery = posts.find(p => p.id === id) || posts[0];
+
+  if (!gallery) {
+    head.innerHTML = `<div class="error">没有找到这个图集。</div>`;
+    return;
+  }
+
+  document.title = `${gallery.title} - ${site.siteName || "女明星生图"}`;
+  head.innerHTML = `
+    <h1>${gallery.title}</h1>
+    <p>分类：${gallery.category || ""} · ${gallery.date || ""} · ${countImages(gallery)} 张</p>
+  `;
+
+  imagesWrap.innerHTML = (gallery.images || []).map(src => `
+    <img src="${src}" alt="${gallery.title}" loading="lazy">
+  `).join("");
+}
+
+function setupSearchIfExist() {
+  const searchToggle = document.querySelector("#searchToggle");
+  const searchPanel = document.querySelector("#searchPanel");
+  const searchInput = document.querySelector("#searchInput");
+  if (searchToggle && searchPanel && searchInput) {
+    searchToggle.onclick = () => {
+      searchPanel.classList.toggle("show");
+      if (searchPanel.classList.contains("show")) searchInput.focus();
+    };
+    searchInput.addEventListener("input", renderPostsIfExist);
   }
 }
 
-document.querySelector("#year").textContent = new Date().getFullYear();
+async function init() {
+  const year = document.querySelector("#year");
+  if (year) year.textContent = new Date().getFullYear();
+  await loadData();
+  applySite();
+  renderStackIfExist();
+  renderFiltersIfExist();
+  renderPostsIfExist();
+  renderGalleryDetailIfExist();
+  setupSearchIfExist();
+}
 
-const searchToggle = document.querySelector("#searchToggle");
-const searchPanel = document.querySelector("#searchPanel");
-const searchInput = document.querySelector("#searchInput");
-
-searchToggle.onclick = () => {
-  searchPanel.classList.toggle("show");
-  if (searchPanel.classList.contains("show")) searchInput.focus();
-};
-
-searchInput.addEventListener("input", renderPosts);
-
-renderStack();
-renderStats();
-renderFilters();
-renderPosts();
+init().catch(err => {
+  document.body.insertAdjacentHTML("beforeend", `<main><div class="error">数据加载失败：${err.message}</div></main>`);
+});

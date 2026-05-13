@@ -4,26 +4,20 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>女明星生图</title>
-  <meta name="description" content="精选女明星生图，高清原图预览，活动现场、红毯、路透、写真热门图集。" />
-  <link rel="stylesheet" href="/assets/style.css" />
+  <link rel="stylesheet" href="./assets/style.css" />
 </head>
 <body>
   <header class="site-top">
-    <a class="brand" href="/">
+    <a class="brand" href="./index.html">
       <span class="brand-mark">女</span>
-      <span>
-        <strong>女明星生图</strong>
-        <em>Live Photo Gallery</em>
-      </span>
+      <span><strong id="brandName">女明星生图</strong><em>Live Photo Gallery</em></span>
     </a>
-
     <nav class="top-nav">
-      <a href="/" class="active">首页</a>
+      <a href="./index.html" class="active">首页</a>
       <a href="#categories">分类</a>
-      <a href="#archive">归档</a>
+      <a href="./admin.html">后台</a>
       <a href="#about">关于</a>
     </nav>
-
     <button id="searchToggle" class="search-btn" aria-label="搜索">⌕</button>
   </header>
 
@@ -31,17 +25,12 @@
     <section class="hero">
       <div>
         <span class="eyebrow">精选生图 · 高清预览</span>
-        <h1>
-          <span>精选女明星生图</span>
-          <span>高清原图预览</span>
-        </h1>
-        <p>每日精选更新，覆盖活动现场、红毯、路透、写真等热门图集。<br>先看预览再选择，高清细节清楚，适合收藏、参考与素材整理。</p>
+        <h1><span id="title1">精选女明星生图</span><span id="title2">高清原图预览</span></h1>
+        <p id="siteDesc"></p>
       </div>
-
       <div class="feature-stack-stage">
         <div class="stack-glow"></div>
         <div class="stack-platform"></div>
-
         <div id="coverStack" class="cover-stack"></div>
       </div>
     </section>
@@ -50,16 +39,8 @@
       <input id="searchInput" placeholder="搜索标题、分类或标签..." />
     </section>
 
-    <section class="stats-cats">
-      <div class="stats">
-        <div><strong id="postCount">0</strong><span>图集</span></div>
-        <div><strong id="categoryCount">0</strong><span>分类</span></div>
-        <div><strong id="tagCount">0</strong><span>标签</span></div>
-      </div>
-
-      <div id="categories" class="cats">
-        <button class="active" data-category="全部">全部</button>
-      </div>
+    <section id="categories" class="cats">
+      <button class="active" data-category="全部">全部</button>
     </section>
 
     <section id="postGrid" class="waterfall"></section>
@@ -70,8 +51,7 @@
     </section>
   </main>
 
-  <footer class="footer">© <span id="year"></span> 女明星生图</footer>
-
-  <script src="/assets/app.js"></script>
+  <footer class="footer">© <span id="year"></span> <span id="footerName">女明星生图</span></footer>
+  <script src="./assets/app.js"></script>
 </body>
 </html>
