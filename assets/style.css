@@ -463,3 +463,45 @@ main{
   .stats{grid-template-columns:1fr}
   .stack-caption{align-items:flex-start;flex-direction:column}
 }
+
+
+/* V4 标题缩小最终版：只影响首页“精选女明星生图 / 高清原图预览” */
+.hero h1 {
+  font-size: 42px !important;
+  line-height: 1.22 !important;
+  letter-spacing: -0.03em !important;
+  max-width: 520px !important;
+}
+
+.hero h1 span {
+  display: block !important;
+  white-space: nowrap !important;
+}
+
+.hero {
+  grid-template-columns: 520px minmax(0, 1fr) !important;
+  gap: 96px !important;
+  align-items: center !important;
+}
+
+.hero p {
+  max-width: 500px !important;
+  font-size: 17px !important;
+  line-height: 1.9 !important;
+}
+
+.feature-stack-stage {
+  justify-content: flex-end !important;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
+
+  .hero h1 {
+    font-size: 34px !important;
+    max-width: 100% !important;
+  }
+}
