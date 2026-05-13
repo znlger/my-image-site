@@ -20,7 +20,7 @@
     <nav class="top-nav">
       <a href="/" class="active">首页</a>
       <a href="#categories">分类</a>
-      <a href="#archive">归档</a>
+      <a href="/archive.html">归档</a>
       <a href="#about">关于</a>
     </nav>
 
@@ -28,8 +28,8 @@
   </header>
 
   <main>
-    <section class="hero">
-      <div>
+    <section class="hero hero-simple">
+      <div class="hero-copy">
         <span class="eyebrow">精选生图 · 高清预览</span>
         <h1>
           <span>精选女明星生图</span>
@@ -37,27 +37,14 @@
         </h1>
         <p>每日精选更新，覆盖活动现场、红毯、路透、写真等热门图集。<br>先看预览再选择，高清细节清楚，适合收藏、参考与素材整理。</p>
       </div>
-
-      <div class="feature-stack-stage">
-        <div class="stack-glow"></div>
-        <div class="stack-platform"></div>
-
-        <div id="coverStack" class="cover-stack"></div>
-      </div>
     </section>
 
     <section id="searchPanel" class="search-panel">
       <input id="searchInput" placeholder="搜索标题、分类或标签..." />
     </section>
 
-    <section class="stats-cats">
-      <div class="stats">
-        <div><strong id="postCount">0</strong><span>图集</span></div>
-        <div><strong id="categoryCount">0</strong><span>分类</span></div>
-        <div><strong id="tagCount">0</strong><span>标签</span></div>
-      </div>
-
-      <div id="categories" class="cats">
+    <section class="category-section">
+      <div id="categories" class="cats cats-left">
         <button class="active" data-category="全部">全部</button>
       </div>
     </section>
