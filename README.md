@@ -122,3 +122,11 @@ galleries/
 如果后台提示 Unauthorized，就是 ADMIN_PASSWORD 没设置好，或输入密码不一致。
 
 如果图片上传成功但前台看不到，检查 IMAGE_BASE_URL 是否填对，以及 R2 Public Development URL 是否开启。
+
+调试增强版新增：
+- 后台“检查配置”
+- 后台“测试 R2 写入”
+- 上传失败显示真实错误
+- 上传成功显示真实 R2 key 和 url
+
+上传覆盖 GitHub 后，一定要到 Cloudflare Pages 重新部署。
