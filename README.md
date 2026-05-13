@@ -1,70 +1,11 @@
-<!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>女明星生图</title>
-  <meta name="description" content="精选女明星生图，高清原图预览，活动现场、红毯、路透、写真热门图集。" />
-  <link rel="stylesheet" href="/assets/style.css" />
-</head>
-<body>
-  <header class="site-top">
-    <a class="brand" href="/">
-      <span class="brand-mark">女</span>
-      <span>
-        <strong>女明星生图</strong>
-        <em>Live Photo Gallery</em>
-      </span>
-    </a>
+# 女明星生图 V4 正式版
 
-    <nav class="top-nav">
-      <a href="/" class="active">首页</a>
-      <a href="#categories">分类</a>
-      <a href="/archive.html">归档</a>
-      <a href="#about">关于</a>
-    </nav>
+上传到 GitHub 覆盖旧文件即可，由 Cloudflare Pages 自动部署。
 
-    <button id="searchToggle" class="search-btn" aria-label="搜索">⌕</button>
-  </header>
+需要上传：
+- index.html
+- assets 文件夹
+- posts 文件夹
+- README.md
 
-  <main>
-    <section class="hero">
-      <div class="hero-copy">
-        <span class="eyebrow">精选生图 · 高清预览</span>
-        <h1>
-          <span>精选女明星生图</span>
-          <span>高清原图预览</span>
-        </h1>
-        <p>每日精选更新，覆盖活动现场、红毯、路透、写真等热门图集。<br>先看预览再选择，高清细节清楚，适合收藏、参考与素材整理。</p>
-      </div>
-
-      <div class="feature-stack-stage">
-        <div class="stack-glow"></div>
-        <div class="stack-platform"></div>
-        <div id="coverStack" class="cover-stack"></div>
-      </div>
-    </section>
-
-    <section id="searchPanel" class="search-panel">
-      <input id="searchInput" placeholder="搜索标题、分类或标签..." />
-    </section>
-
-    <section class="category-section">
-      <div id="categories" class="cats cats-left">
-        <button class="active" data-category="全部">全部</button>
-      </div>
-    </section>
-
-    <section id="postGrid" class="waterfall"></section>
-
-    <section id="about" class="about">
-      <h2>关于本站</h2>
-      <p>本站用于女明星生图、活动图、红毯图、写真图集预览。请确保上传图片拥有版权或授权。</p>
-    </section>
-  </main>
-
-  <footer class="footer">© <span id="year"></span> 女明星生图</footer>
-
-  <script src="/assets/app.js"></script>
-</body>
-</html>
+不要上传 zip 文件本身。

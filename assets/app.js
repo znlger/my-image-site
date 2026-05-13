@@ -57,29 +57,35 @@ const posts = [
 
 let currentCategory = "全部";
 
-function getStats() {
+function renderStack() {
+  const stack = document.querySelector("#coverStack");
+  const topFive = posts.slice(0, 5);
+  stack.innerHTML = topFive.map((p, index) => `
+    <a class="stack-card c${index + 1}" href="${p.url}">
+      <img src="${p.cover}" alt="${p.title}">
+    </a>
+  `).join("") + `
+    <div class="stack-caption">
+      <div>
+        <small>前五图集封面精选</small>
+        <strong>从左到右，一张盖着一张</strong>
+      </div>
+      <span class="count">${topFive.length} 组精选</span>
+    </div>
+  `;
+}
+
+function renderStats() {
   const categories = [...new Set(posts.map(p => p.category))];
   const tags = [...new Set(posts.flatMap(p => p.tags))];
-  return { categories, tags };
+  document.querySelector("#postCount").textContent = posts.length;
+  document.querySelector("#categoryCount").textContent = categories.length;
+  document.querySelector("#tagCount").textContent = tags.length;
 }
 
-function renderStatsIfExist() {
-  const postCount = document.querySelector("#postCount");
-  const categoryCount = document.querySelector("#categoryCount");
-  const tagCount = document.querySelector("#tagCount");
-  if (!postCount || !categoryCount || !tagCount) return;
-
-  const { categories, tags } = getStats();
-  postCount.textContent = posts.length;
-  categoryCount.textContent = categories.length;
-  tagCount.textContent = tags.length;
-}
-
-function renderFiltersIfExist() {
+function renderFilters() {
   const wrap = document.querySelector("#categories");
-  if (!wrap) return;
-
-  const { categories } = getStats();
+  const categories = [...new Set(posts.map(p => p.category))];
 
   categories.forEach(cat => {
     const btn = document.createElement("button");
@@ -93,16 +99,14 @@ function renderFiltersIfExist() {
     document.querySelectorAll(".cats button").forEach(b => b.classList.remove("active"));
     e.target.classList.add("active");
     currentCategory = e.target.dataset.category;
-    renderPostsIfExist();
+    renderPosts();
   });
 }
 
-function renderPostsIfExist() {
-  const grid = document.querySelector("#postGrid");
-  if (!grid) return;
-
+function renderPosts() {
   const searchEl = document.querySelector("#searchInput");
   const q = searchEl ? searchEl.value.trim().toLowerCase() : "";
+  const grid = document.querySelector("#postGrid");
 
   const filtered = posts.filter(p => {
     const matchCategory = currentCategory === "全部" || p.category === currentCategory;
@@ -133,34 +137,20 @@ function renderPostsIfExist() {
   }
 }
 
-function renderArchiveIfExist() {
-  const list = document.querySelector("#archiveList");
-  if (!list) return;
-
-  list.innerHTML = posts.map(p => `
-    <a class="archive-item" href="${p.url}">
-      <strong>${p.title}</strong>
-      <span>${p.category} · ${p.date} · ${p.count} 张</span>
-    </a>
-  `).join("");
-}
-
-const year = document.querySelector("#year");
-if (year) year.textContent = new Date().getFullYear();
+document.querySelector("#year").textContent = new Date().getFullYear();
 
 const searchToggle = document.querySelector("#searchToggle");
 const searchPanel = document.querySelector("#searchPanel");
 const searchInput = document.querySelector("#searchInput");
 
-if (searchToggle && searchPanel && searchInput) {
-  searchToggle.onclick = () => {
-    searchPanel.classList.toggle("show");
-    if (searchPanel.classList.contains("show")) searchInput.focus();
-  };
-  searchInput.addEventListener("input", renderPostsIfExist);
-}
+searchToggle.onclick = () => {
+  searchPanel.classList.toggle("show");
+  if (searchPanel.classList.contains("show")) searchInput.focus();
+};
 
-renderStatsIfExist();
-renderFiltersIfExist();
-renderPostsIfExist();
-renderArchiveIfExist();
+searchInput.addEventListener("input", renderPosts);
+
+renderStack();
+renderStats();
+renderFilters();
+renderPosts();
