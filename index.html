@@ -3,65 +3,74 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>明星生图预览</title>
-  <meta name="description" content="明星活动图、生图、写真预览站" />
+  <title>星图画廊</title>
+  <meta name="description" content="高级瀑布流图片图集展示站" />
   <link rel="stylesheet" href="/assets/style.css" />
 </head>
 <body>
-  <div class="page-bg"></div>
+  <div class="ambient"></div>
 
-  <header class="top-hero">
-    <div class="avatar">
-      <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&auto=format&fit=crop" alt="站点头像">
-    </div>
-    <h1>明星生图预览</h1>
-    <p>合作加微信/QQ：ruyaorumo</p>
+  <header class="site-top">
+    <a class="brand" href="/">
+      <span class="brand-mark">S</span>
+      <span>
+        <strong>星图画廊</strong>
+        <em>Visual Gallery</em>
+      </span>
+    </a>
+
+    <nav class="top-nav">
+      <a href="/" class="active">首页</a>
+      <a href="#categories">分类</a>
+      <a href="#archive">归档</a>
+      <a href="#about">关于</a>
+    </nav>
+
+    <button id="searchToggle" class="round-btn" aria-label="搜索">⌕</button>
   </header>
 
-  <nav class="nav-card">
-    <a href="/" class="active">首页</a>
-    <a href="#categories">分类</a>
-    <a href="#archive">本站归档</a>
-    <a href="#links">更多网站</a>
-    <a href="#about">关于</a>
-    <button id="searchToggle" class="icon-btn" aria-label="搜索">⌕</button>
-    <button id="themeToggle" class="icon-btn" aria-label="切换主题">◐</button>
-  </nav>
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Curated Visual Collection</span>
+        <h1>更漂亮的<br>瀑布流图集展示</h1>
+        <p>以图片为主角，适合活动图、生图、写真、街拍、作品集预览。</p>
+      </div>
 
-  <main class="container">
+      <div class="hero-card">
+        <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=1000&auto=format&fit=crop" alt="">
+        <div class="hero-card-info">
+          <span>精选图集</span>
+          <strong>红毯活动生图预览</strong>
+        </div>
+      </div>
+    </section>
+
     <section id="searchPanel" class="search-panel">
       <input id="searchInput" placeholder="搜索标题、分类或标签..." />
     </section>
 
-    <section class="stats-row">
-      <div class="stat-card"><strong id="postCount">0</strong><span>图集</span></div>
-      <div class="stat-card"><strong id="categoryCount">0</strong><span>分类</span></div>
-      <div class="stat-card"><strong id="tagCount">0</strong><span>标签</span></div>
+    <section class="control-row">
+      <div class="stats">
+        <div><strong id="postCount">0</strong><span>图集</span></div>
+        <div><strong id="categoryCount">0</strong><span>分类</span></div>
+        <div><strong id="tagCount">0</strong><span>标签</span></div>
+      </div>
+
+      <div id="categories" class="category-bar">
+        <button class="category-pill active" data-category="全部">全部</button>
+      </div>
     </section>
 
-    <section id="categories" class="category-bar">
-      <button class="category-pill active" data-category="全部">全部</button>
-    </section>
+    <section id="postGrid" class="waterfall"></section>
 
-    <section id="postGrid" class="masonry-grid"></section>
-
-    <section id="about" class="about-card">
+    <section id="about" class="about">
       <h2>关于本站</h2>
-      <p>本站用于图集预览展示。请确认上传的图片拥有版权或授权，避免使用未授权图片。</p>
+      <p>这是一个低成本静态图集站。你可以把图片放到 Cloudflare R2，再把图片链接填入网站数据里。</p>
     </section>
   </main>
 
-  <div id="notice" class="notice">
-    <div class="notice-card">
-      <button id="closeNotice" aria-label="关闭">×</button>
-      <h3>温馨提示</h3>
-      <p>本站仅作图片预览展示。请勿上传侵犯版权、肖像权或平台规则的内容。</p>
-    </div>
-  </div>
-
-  <footer class="footer">
-    © <span id="year"></span> 明星生图预览
-  </footer>
+  <footer class="footer">© <span id="year"></span> 星图画廊</footer>
 
   <script src="/assets/app.js"></script>
 </body>

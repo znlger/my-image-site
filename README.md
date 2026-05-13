@@ -1,11 +1,9 @@
-# Pretty Image Site V2
+# Image Gallery V3 Masonry
 
-上传到 GitHub 后，由 Cloudflare Pages 自动部署。
+这是更偏高级瀑布流的图集站模板。
 
-需要上传/覆盖：
+上传覆盖：
 - index.html
 - assets/style.css
 - assets/app.js
-- posts/*.html
-
-不要上传 zip 文件本身。
+- posts 文件夹

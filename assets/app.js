@@ -1,6 +1,6 @@
 const posts = [
   {
-    title: "示例图集 01｜红毯活动生图",
+    title: "红毯活动生图预览",
     category: "活动",
     date: "5天前",
     count: 6,
@@ -9,7 +9,7 @@ const posts = [
     tags: ["活动", "生图", "高清"]
   },
   {
-    title: "示例图集 02｜白裙现场图",
+    title: "白裙现场图集",
     category: "写真",
     date: "5天前",
     count: 4,
@@ -18,7 +18,7 @@ const posts = [
     tags: ["写真", "预览"]
   },
   {
-    title: "示例图集 03｜近景高清图",
+    title: "近景高清图",
     category: "街拍",
     date: "5天前",
     count: 5,
@@ -27,13 +27,31 @@ const posts = [
     tags: ["街拍", "高清"]
   },
   {
-    title: "示例图集 04｜舞台造型图",
+    title: "舞台造型图",
     category: "活动",
     date: "6天前",
     count: 8,
     cover: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=900&auto=format&fit=crop",
     url: "/posts/sample-04.html",
     tags: ["舞台", "现场"]
+  },
+  {
+    title: "暖色调写真预览",
+    category: "写真",
+    date: "7天前",
+    count: 9,
+    cover: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=900&auto=format&fit=crop",
+    url: "/posts/sample-05.html",
+    tags: ["写真", "暖色"]
+  },
+  {
+    title: "城市街拍合集",
+    category: "街拍",
+    date: "8天前",
+    count: 7,
+    cover: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900&auto=format&fit=crop",
+    url: "/posts/sample-06.html",
+    tags: ["街拍", "城市"]
   }
 ];
 
@@ -80,14 +98,14 @@ function renderPosts() {
     return matchCategory && matchSearch;
   });
 
-  grid.innerHTML = filtered.map((p, index) => `
-    <a class="gallery-card ${index % 5 === 3 ? "wide" : ""}" href="${p.url}">
-      <div class="cover-wrap">
-        <img src="${p.cover}" alt="${p.title}" loading="lazy">
-        <span class="badge time">${p.date}</span>
-        <span class="badge count">◉ ${p.count}</span>
+  grid.innerHTML = filtered.map(p => `
+    <a class="gallery-card" href="${p.url}">
+      <img src="${p.cover}" alt="${p.title}" loading="lazy">
+      <div class="card-top">
+        <span class="badge">${p.date}</span>
+        <span class="badge">◉ ${p.count}</span>
       </div>
-      <div class="card-info">
+      <div class="card-content">
         <h2>${p.title}</h2>
         <div class="card-meta">
           <span>${p.category}</span>
@@ -115,28 +133,6 @@ searchToggle.onclick = () => {
 };
 
 searchInput.addEventListener("input", renderPosts);
-
-const themeToggle = document.querySelector("#themeToggle");
-themeToggle.onclick = () => {
-  document.body.classList.toggle("dark");
-  localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
-};
-
-if (localStorage.getItem("theme") === "dark") {
-  document.body.classList.add("dark");
-}
-
-const notice = document.querySelector("#notice");
-const closeNotice = document.querySelector("#closeNotice");
-
-if (!localStorage.getItem("noticeClosedV2")) {
-  notice.style.display = "flex";
-}
-
-closeNotice.onclick = () => {
-  notice.style.display = "none";
-  localStorage.setItem("noticeClosedV2", "1");
-};
 
 renderStats();
 renderFilters();

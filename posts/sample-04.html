@@ -3,48 +3,40 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>示例图集 04｜舞台造型图 - 明星生图预览</title>
+  <title>舞台造型图 - 星图画廊</title>
   <link rel="stylesheet" href="/assets/style.css" />
   <style>
-    .post-main{width:min(1100px,92%);margin:0 auto 60px}
-    .post-title{text-align:center;margin:40px 0 28px}
-    .post-title h1{font-size:clamp(28px,4vw,42px);margin:0 0 10px}
-    .post-title p{color:var(--muted);margin:0}
-    .gallery-detail{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
-    .gallery-detail img{width:100%;display:block;border-radius:24px;box-shadow:var(--shadow);background:#eee}
-    .back-link{display:inline-block;margin:28px 0;color:var(--brand);font-weight:700}
-    @media(max-width:720px){.gallery-detail{grid-template-columns:1fr}}
+    .post-wrap{width:min(1180px,92%);margin:54px auto}
+    .post-head{margin-bottom:28px}
+    .post-head h1{font-size:clamp(34px,5vw,64px);margin:0 0 12px;letter-spacing:-.05em}
+    .post-head p{color:var(--muted)}
+    .detail-grid{column-count:2;column-gap:18px}
+    .detail-grid img{width:100%;display:block;margin:0 0 18px;border-radius:28px;box-shadow:var(--shadow)}
+    .back{display:inline-block;margin-bottom:24px;font-weight:900;color:var(--ink)}
+    @media(max-width:760px){.detail-grid{column-count:1}}
   </style>
 </head>
 <body>
-  <div class="page-bg"></div>
-  <header class="top-hero">
-    <div class="avatar">
-      <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&auto=format&fit=crop" alt="站点头像">
-    </div>
-    <h1>明星生图预览</h1>
-    <p>合作加微信/QQ：ruyaorumo</p>
+  <div class="ambient"></div>
+  <header class="site-top">
+    <a class="brand" href="/">
+      <span class="brand-mark">S</span>
+      <span><strong>星图画廊</strong><em>Visual Gallery</em></span>
+    </a>
+    <nav class="top-nav"><a href="/">首页</a><a href="/">分类</a><a href="/">归档</a><a href="/">关于</a></nav>
   </header>
-  <nav class="nav-card">
-    <a href="/">首页</a>
-    <a href="/">分类</a>
-    <a href="/">本站归档</a>
-    <a href="/">更多网站</a>
-    <a href="/">关于</a>
-  </nav>
-  <main class="post-main">
-    <a class="back-link" href="/">← 返回首页</a>
-    <div class="post-title">
-      <h1>示例图集 04｜舞台造型图</h1>
-      <p>分类：活动 · 仅作预览展示</p>
-    </div>
-    <div class="gallery-detail">
+  <main class="post-wrap">
+    <a class="back" href="/">← 返回首页</a>
+    <section class="post-head">
+      <h1>舞台造型图</h1>
+      <p>分类：活动 · 仅作图片预览展示</p>
+    </section>
+    <section class="detail-grid">
       <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=1200&auto=format&fit=crop" alt="">
       <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1200&auto=format&fit=crop" alt="">
       <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=1200&auto=format&fit=crop" alt="">
-      <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200&auto=format&fit=crop" alt="">
-    </div>
+      <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1200&auto=format&fit=crop" alt="">
+    </section>
   </main>
-  <footer class="footer">© 2026 明星生图预览</footer>
 </body>
 </html>
