@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>我的图集站</title>
+  <meta name="description" content="低成本图片图集展示站" />
+  <link rel="stylesheet" href="/assets/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="/">我的图集站</a>
+      <nav>
+        <a href="/">首页</a>
+        <a href="#categories">分类</a>
+        <a href="#about">联系</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1>图片预览 / 图集展示</h1>
+      <p>这是一个使用 GitHub + Cloudflare Pages 免费部署的静态图片站模板。</p>
+      <div class="search-box">
+        <input id="searchInput" placeholder="搜索标题、分类或标签..." />
+      </div>
+    </section>
+
+    <section class="stats">
+      <div><strong id="postCount">0</strong><span>图集</span></div>
+      <div><strong id="categoryCount">0</strong><span>分类</span></div>
+      <div><strong id="tagCount">0</strong><span>标签</span></div>
+    </section>
+
+    <section id="categories" class="filter-wrap">
+      <button class="filter active" data-category="全部">全部</button>
+    </section>
+
+    <section id="postGrid" class="grid"></section>
+
+    <section id="about" class="about">
+      <h2>联系</h2>
+      <p>这里可以放你的联系方式、投稿说明、版权说明或合作说明。</p>
+    </section>
+  </main>
+
+  <div id="notice" class="notice">
+    <div class="notice-card">
+      <button id="closeNotice" aria-label="关闭">×</button>
+      <h3>提示</h3>
+      <p>本站仅作图片预览展示，请确保你上传的图片拥有版权或授权。</p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">© <span id="year"></span> 我的图集站</div>
+  </footer>
+
+  <script src="/assets/app.js"></script>
+</body>
+</html>
