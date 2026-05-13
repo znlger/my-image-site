@@ -110,7 +110,7 @@ function renderList() {
 
   list.innerHTML = galleries.map((g, i) => `
     <div class="gallery-item ${i === currentIndex ? "active" : ""}" onclick="selectGallery(${i})">
-      <div class="thumb"><img src="${g.cover || ""}"></div>
+      <div class="thumb"><img src="${g.cover || ""}" loading="lazy" decoding="async"></div>
       <div class="gallery-info">
         <strong>${g.title || "未命名图集"}</strong>
         <span>${g.category || ""} · ${g.date || ""} · ${(g.images || []).length} 张</span>
@@ -155,7 +155,7 @@ function renderImages() {
 
   document.querySelector("#detailPreview").innerHTML = (g.images || []).map((src, i) => `
     <div class="image-card">
-      <img src="${src}">
+      <img src="${src}" loading="lazy" decoding="async">
       <button onclick="removeImage(${i})">×</button>
     </div>
   `).join("");
@@ -237,11 +237,18 @@ function moveImage() {
   }
 }
 
+function formatBytes(bytes) {
+  if (!Number.isFinite(bytes)) return "未知";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+}
+
 /**
  * 上传前自动压缩图片
  * 封面：最大宽度 900px
  * 详情图：最大宽度 1600px
- * 格式：WebP
+ * 输出格式：WebP
  */
 async function compressImage(file, kind) {
   if (!file.type || !file.type.startsWith("image/")) return file;
@@ -252,37 +259,45 @@ async function compressImage(file, kind) {
   const img = new Image();
   const objectUrl = URL.createObjectURL(file);
 
-  await new Promise((resolve, reject) => {
-    img.onload = resolve;
-    img.onerror = reject;
-    img.src = objectUrl;
-  });
+  try {
+    await new Promise((resolve, reject) => {
+      img.onload = resolve;
+      img.onerror = () => reject(new Error("图片读取失败，可能是格式不支持或文件损坏"));
+      img.src = objectUrl;
+    });
 
-  let width = img.width;
-  let height = img.height;
+    let width = img.naturalWidth || img.width;
+    let height = img.naturalHeight || img.height;
 
-  if (width > maxWidth) {
-    height = Math.round(height * maxWidth / width);
-    width = maxWidth;
+    if (!width || !height) return file;
+
+    if (width > maxWidth) {
+      height = Math.round(height * maxWidth / width);
+      width = maxWidth;
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    const ctx = canvas.getContext("2d", { alpha: false });
+    ctx.drawImage(img, 0, 0, width, height);
+
+    const blob = await new Promise(resolve => {
+      canvas.toBlob(resolve, "image/webp", quality);
+    });
+
+    if (!blob) return file;
+
+    const newName = file.name.replace(/\.[^.]+$/, "") + ".webp";
+
+    return new File([blob], newName, {
+      type: "image/webp",
+      lastModified: Date.now()
+    });
+  } finally {
+    URL.revokeObjectURL(objectUrl);
   }
-
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-
-  const ctx = canvas.getContext("2d");
-  ctx.drawImage(img, 0, 0, width, height);
-
-  URL.revokeObjectURL(objectUrl);
-
-  const blob = await new Promise(resolve => {
-    canvas.toBlob(resolve, "image/webp", quality);
-  });
-
-  if (!blob) return file;
-
-  const newName = file.name.replace(/\.[^.]+$/, "") + ".webp";
-  return new File([blob], newName, { type: "image/webp" });
 }
 
 async function uploadOne(file, kind, index = 1) {
@@ -321,19 +336,29 @@ async function uploadOne(file, kind, index = 1) {
     throw new Error(data.error || data.message || text || `HTTP ${res.status}`);
   }
 
+  const savedBytes = file.size - uploadFile.size;
+  const savedPercent = file.size > 0
+    ? Math.round((savedBytes / file.size) * 100)
+    : 0;
+
   logDebug({
     uploadSuccess: true,
+    kind,
     originalFile: {
       name: file.name,
       size: file.size,
+      readableSize: formatBytes(file.size),
       type: file.type
     },
     uploadedFile: {
       name: uploadFile.name,
       size: uploadFile.size,
+      readableSize: formatBytes(uploadFile.size),
       type: uploadFile.type
     },
-    savedBytes: file.size - uploadFile.size,
+    savedBytes,
+    savedReadableSize: formatBytes(savedBytes),
+    savedPercent: `${savedPercent}%`,
     result: data
   });
 
@@ -348,7 +373,7 @@ async function uploadCover(e) {
     toast("封面压缩并上传中...");
 
     logDebug(`开始处理封面：${file.name}
-原始大小：${file.size} bytes
+原始大小：${formatBytes(file.size)}
 类型：${file.type}`);
 
     const result = await uploadOne(file, "cover", 1);
@@ -381,7 +406,7 @@ async function uploadDetails(e) {
 
     for (let i = 0; i < files.length; i++) {
       logDebug(`开始处理详情图 ${i + 1}/${files.length}：${files[i].name}
-原始大小：${files[i].size} bytes
+原始大小：${formatBytes(files[i].size)}
 类型：${files[i].type}`);
 
       const result = await uploadOne(files[i], "detail", g.images.length + 1);
