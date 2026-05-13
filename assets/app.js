@@ -34,6 +34,67 @@ function safeText(value) {
     .replace(/"/g, "&quot;");
 }
 
+function isValidUrl(value) {
+  try {
+    const url = new URL(String(value || ""));
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function getBeijingDateParts(date) {
+  const parts = new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(date);
+
+  const obj = {};
+  parts.forEach(part => {
+    if (part.type !== "literal") obj[part.type] = Number(part.value);
+  });
+
+  return obj;
+}
+
+function beijingDayNumber(date) {
+  const p = getBeijingDateParts(date);
+  return Math.floor(Date.UTC(p.year, p.month - 1, p.day) / 86400000);
+}
+
+function chineseNumber(num) {
+  const map = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
+  if (num <= 10) return map[num] || String(num);
+  if (num < 20) return "十" + map[num - 10];
+  if (num < 100) {
+    const ten = Math.floor(num / 10);
+    const one = num % 10;
+    return map[ten] + "十" + (one ? map[one] : "");
+  }
+  return String(num);
+}
+
+function formatRelativeDate(post) {
+  const raw = post && (post.createdAt || post.uploadedAt);
+  if (!raw) return (post && post.date) || "今天";
+
+  const created = new Date(raw);
+  if (Number.isNaN(created.getTime())) return (post && post.date) || "今天";
+
+  const today = beijingDayNumber(new Date());
+  const then = beijingDayNumber(created);
+  const diff = Math.max(0, today - then);
+
+  if (diff === 0) return "今天";
+  if (diff === 1) return "昨天";
+  if (diff < 7) return `${chineseNumber(diff)}天前`;
+  if (diff < 30) return `${chineseNumber(Math.floor(diff / 7))}周前`;
+  if (diff < 365) return `${chineseNumber(Math.floor(diff / 30))}个月前`;
+  return `${chineseNumber(Math.floor(diff / 365))}年前`;
+}
+
 function applySite() {
   const siteName = site.siteName || "女明星生图";
   const brandName = document.querySelector("#brandName");
@@ -131,6 +192,7 @@ function renderPostsIfExist() {
 
   grid.innerHTML = visiblePosts.map((p, index) => {
     const isEarly = index < 4;
+    const hasBuyUrl = isValidUrl(p.buyUrl);
 
     return `
       <a class="gallery-card" href="./gallery.html?id=${encodeURIComponent(p.id)}">
@@ -142,8 +204,8 @@ function renderPostsIfExist() {
           fetchpriority="${isEarly ? "auto" : "low"}"
         >
         <div class="card-top">
-          <span class="badge">${safeText(p.date || "")}</span>
-          <span class="badge">◉ ${countImages(p)}</span>
+          <span class="badge">${safeText(formatRelativeDate(p))}</span>
+          <span class="badge">${hasBuyUrl ? "可购买 · " : ""}◉ ${countImages(p)}</span>
         </div>
         <div class="card-content">
           <h2>${safeText(p.title)}</h2>
@@ -177,11 +239,14 @@ function renderGalleryDetailIfExist() {
     ? gallery.images.filter(Boolean)
     : [];
 
+  const hasBuyUrl = isValidUrl(gallery.buyUrl);
+
   document.title = `${gallery.title} - ${site.siteName || "女明星生图"}`;
 
   head.innerHTML = `
     <h1>${safeText(gallery.title)}</h1>
-    <p>分类：${safeText(gallery.category || "")} · ${safeText(gallery.date || "")} · ${images.length} 张</p>
+    <p>分类：${safeText(gallery.category || "")} · ${safeText(formatRelativeDate(gallery))} · ${images.length} 张</p>
+    ${hasBuyUrl ? `<div class="post-actions"><a class="buy-button" href="${safeText(gallery.buyUrl)}" target="_blank" rel="noopener noreferrer">购买同款 / 查看链接</a></div>` : ""}
   `;
 
   imagesWrap.innerHTML = images.map((src, index) => {

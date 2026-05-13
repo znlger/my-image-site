@@ -26,6 +26,58 @@ function setDebug(id, text, cls = "") {
   el.className = cls;
 }
 
+function getBeijingDateParts(date) {
+  const parts = new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(date);
+
+  const obj = {};
+  parts.forEach(part => {
+    if (part.type !== "literal") obj[part.type] = Number(part.value);
+  });
+  return obj;
+}
+
+function beijingDayNumber(date) {
+  const p = getBeijingDateParts(date);
+  return Math.floor(Date.UTC(p.year, p.month - 1, p.day) / 86400000);
+}
+
+function chineseNumber(num) {
+  const map = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
+  if (num <= 10) return map[num] || String(num);
+  if (num < 20) return "十" + map[num - 10];
+  if (num < 100) {
+    const ten = Math.floor(num / 10);
+    const one = num % 10;
+    return map[ten] + "十" + (one ? map[one] : "");
+  }
+  return String(num);
+}
+
+function formatRelativeDate(gallery) {
+  const raw = gallery && (gallery.createdAt || gallery.uploadedAt);
+  if (!raw) return (gallery && gallery.date) || "今天";
+
+  const created = new Date(raw);
+  if (Number.isNaN(created.getTime())) return (gallery && gallery.date) || "今天";
+
+  const diff = Math.max(0, beijingDayNumber(new Date()) - beijingDayNumber(created));
+  if (diff === 0) return "今天";
+  if (diff === 1) return "昨天";
+  if (diff < 7) return `${chineseNumber(diff)}天前`;
+  if (diff < 30) return `${chineseNumber(Math.floor(diff / 7))}周前`;
+  if (diff < 365) return `${chineseNumber(Math.floor(diff / 30))}个月前`;
+  return `${chineseNumber(Math.floor(diff / 365))}年前`;
+}
+
+function touchGalleryCreatedAt(gallery) {
+  if (gallery && !gallery.createdAt) gallery.createdAt = new Date().toISOString();
+}
+
 async function apiJson(url, options = {}) {
   const headers = options.headers || {};
   headers["x-admin-password"] = adminPassword;
@@ -74,6 +126,12 @@ async function loadAll() {
   galleries = await apiJson("./api/galleries");
 
   if (!galleries.length) addGallery(false);
+
+  galleries.forEach(g => {
+    if (!Array.isArray(g.images)) g.images = [];
+    if (!Array.isArray(g.tags)) g.tags = [];
+    if (!g.buyUrl) g.buyUrl = "";
+  });
 
   fillSite();
   selectGallery(0);
@@ -128,7 +186,7 @@ function renderList() {
       </div>
       <div class="gallery-info">
         <strong>${g.title || "未命名图集"}</strong>
-        <span>${g.category || ""} · ${g.date || ""} · ${(g.images || []).length} 张</span>
+        <span>${g.category || ""} · ${formatRelativeDate(g)} · ${(g.images || []).length} 张</span>
       </div>
       <span class="badge">拖动</span>
     </div>
@@ -190,8 +248,10 @@ function selectGallery(index) {
   document.querySelector("#galleryId").value = g.id;
   document.querySelector("#galleryTitle").value = g.title || "";
   document.querySelector("#galleryCategory").value = g.category || "活动";
-  document.querySelector("#galleryDate").value = g.date || "今天";
+  document.querySelector("#galleryDate").value = formatRelativeDate(g);
   document.querySelector("#galleryTags").value = (g.tags || []).join(", ");
+  const buyUrlInput = document.querySelector("#galleryBuyUrl");
+  if (buyUrlInput) buyUrlInput.value = g.buyUrl || "";
   document.querySelector("#coverPreview").src = g.cover || "";
 
   renderImages();
@@ -204,11 +264,13 @@ function syncForm() {
 
   g.title = document.querySelector("#galleryTitle").value.trim();
   g.category = document.querySelector("#galleryCategory").value;
-  g.date = document.querySelector("#galleryDate").value.trim();
+  g.date = formatRelativeDate(g);
   g.tags = document.querySelector("#galleryTags").value
     .split(",")
     .map(x => x.trim())
     .filter(Boolean);
+  const buyUrlInput = document.querySelector("#galleryBuyUrl");
+  g.buyUrl = buyUrlInput ? buyUrlInput.value.trim() : (g.buyUrl || "");
 }
 
 function renderImages() {
@@ -286,6 +348,11 @@ async function saveGalleries() {
   try {
     syncForm();
 
+    galleries.forEach(g => {
+      if (g.createdAt) g.date = formatRelativeDate(g);
+      if (!g.buyUrl) g.buyUrl = "";
+    });
+
     const result = await apiJson("./api/galleries", {
       method: "POST",
       body: JSON.stringify(galleries)
@@ -314,9 +381,11 @@ function addGallery(save = true) {
     id: `gallery-${String(next).padStart(3, "0")}`,
     title: "新图集标题",
     category: "活动",
+    createdAt: new Date().toISOString(),
     date: "今天",
     cover: "",
     tags: ["生图"],
+    buyUrl: "",
     images: []
   });
 
@@ -430,6 +499,8 @@ async function compressImage(file, kind) {
 
 async function uploadOne(file, kind, index = 1) {
   const g = galleries[currentIndex];
+  touchGalleryCreatedAt(g);
+  g.date = formatRelativeDate(g);
 
   const uploadFile = await compressImage(file, kind);
 
@@ -507,6 +578,8 @@ async function uploadCover(e) {
     const result = await uploadOne(file, "cover", 1);
 
     galleries[currentIndex].cover = result.url;
+    galleries[currentIndex].date = formatRelativeDate(galleries[currentIndex]);
+    document.querySelector("#galleryDate").value = galleries[currentIndex].date;
     document.querySelector("#coverPreview").src = result.url;
 
     renderList();
@@ -539,6 +612,8 @@ async function uploadDetails(e) {
 
       const result = await uploadOne(files[i], "detail", g.images.length + 1);
       g.images.push(result.url);
+      g.date = formatRelativeDate(g);
+      document.querySelector("#galleryDate").value = g.date;
     }
 
     renderImages();
@@ -624,9 +699,11 @@ document.querySelector("#moveImageBtn").addEventListener("click", moveImage);
 document.querySelector("#runDebugBtn").addEventListener("click", runDebug);
 document.querySelector("#testR2Btn").addEventListener("click", testR2Write);
 
-["galleryTitle", "galleryCategory", "galleryDate", "galleryTags"].forEach(id => {
-  document.querySelector(`#${id}`).addEventListener("input", syncForm);
-  document.querySelector(`#${id}`).addEventListener("change", syncForm);
+["galleryTitle", "galleryCategory", "galleryTags", "galleryBuyUrl"].forEach(id => {
+  const el = document.querySelector(`#${id}`);
+  if (!el) return;
+  el.addEventListener("input", syncForm);
+  el.addEventListener("change", syncForm);
 });
 
 const saved = sessionStorage.getItem("ADMIN_PASSWORD");

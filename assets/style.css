@@ -217,3 +217,10 @@ main{width:min(1320px,92%);margin:0 auto}
 .debug-log{white-space:pre-wrap;background:#111827;color:#e5e7eb;border-radius:18px;padding:16px;overflow:auto;max-height:260px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px}
 @media(max-width:1100px){.debug-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:640px){.debug-grid{grid-template-columns:1fr}}
+
+
+/* Buy link */
+.post-actions{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0 6px}
+.buy-button{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:13px 20px;background:linear-gradient(135deg,#151b2d,#7c3aed);color:#fff;font-weight:900;box-shadow:0 16px 42px rgba(124,58,237,.22)}
+.buy-button:hover{transform:translateY(-1px);box-shadow:0 20px 50px rgba(124,58,237,.28)}
+.field input[readonly]{background:rgba(245,247,251,.82);color:#667085;cursor:not-allowed}
