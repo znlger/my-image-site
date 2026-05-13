@@ -79,8 +79,8 @@ function renderStackIfExist() {
   }).join("") + `
     <div class="stack-caption">
       <div>
-        <small>前五图集封面精选</small>
-        <strong>从左到右，一张盖着一张</strong>
+        <small>精选女明星生图</small>
+        <strong>原图高清无水印，放大可见毛孔</strong>
       </div>
       <span class="count">${topFive.length} 组精选</span>
     </div>
