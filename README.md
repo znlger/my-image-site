@@ -1,9 +1,11 @@
-# Image Gallery V3 Masonry
+# 女明星生图 V4 正式版
 
-这是更偏高级瀑布流的图集站模板。
+上传到 GitHub 覆盖旧文件即可，由 Cloudflare Pages 自动部署。
 
-上传覆盖：
+需要上传：
 - index.html
-- assets/style.css
-- assets/app.js
+- assets 文件夹
 - posts 文件夹
+- README.md
+
+不要上传 zip 文件本身。

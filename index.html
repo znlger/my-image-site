@@ -3,19 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>星图画廊</title>
-  <meta name="description" content="高级瀑布流图片图集展示站" />
+  <title>女明星生图</title>
+  <meta name="description" content="精选女明星生图，高清原图预览，活动现场、红毯、路透、写真热门图集。" />
   <link rel="stylesheet" href="/assets/style.css" />
 </head>
 <body>
-  <div class="ambient"></div>
-
   <header class="site-top">
     <a class="brand" href="/">
-      <span class="brand-mark">S</span>
+      <span class="brand-mark">女</span>
       <span>
-        <strong>星图画廊</strong>
-        <em>Visual Gallery</em>
+        <strong>女明星生图</strong>
+        <em>Live Photo Gallery</em>
       </span>
     </a>
 
@@ -26,23 +24,25 @@
       <a href="#about">关于</a>
     </nav>
 
-    <button id="searchToggle" class="round-btn" aria-label="搜索">⌕</button>
+    <button id="searchToggle" class="search-btn" aria-label="搜索">⌕</button>
   </header>
 
   <main>
     <section class="hero">
-      <div class="hero-copy">
-        <span class="eyebrow">Curated Visual Collection</span>
-        <h1>更漂亮的<br>瀑布流图集展示</h1>
-        <p>以图片为主角，适合活动图、生图、写真、街拍、作品集预览。</p>
+      <div>
+        <span class="eyebrow">精选生图 · 高清预览</span>
+        <h1>
+          <span>精选女明星生图</span>
+          <span>高清原图预览</span>
+        </h1>
+        <p>每日精选更新，覆盖活动现场、红毯、路透、写真等热门图集。<br>先看预览再选择，高清细节清楚，适合收藏、参考与素材整理。</p>
       </div>
 
-      <div class="hero-card">
-        <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=1000&auto=format&fit=crop" alt="">
-        <div class="hero-card-info">
-          <span>精选图集</span>
-          <strong>红毯活动生图预览</strong>
-        </div>
+      <div class="feature-stack-stage">
+        <div class="stack-glow"></div>
+        <div class="stack-platform"></div>
+
+        <div id="coverStack" class="cover-stack"></div>
       </div>
     </section>
 
@@ -50,15 +50,15 @@
       <input id="searchInput" placeholder="搜索标题、分类或标签..." />
     </section>
 
-    <section class="control-row">
+    <section class="stats-cats">
       <div class="stats">
         <div><strong id="postCount">0</strong><span>图集</span></div>
         <div><strong id="categoryCount">0</strong><span>分类</span></div>
         <div><strong id="tagCount">0</strong><span>标签</span></div>
       </div>
 
-      <div id="categories" class="category-bar">
-        <button class="category-pill active" data-category="全部">全部</button>
+      <div id="categories" class="cats">
+        <button class="active" data-category="全部">全部</button>
       </div>
     </section>
 
@@ -66,11 +66,11 @@
 
     <section id="about" class="about">
       <h2>关于本站</h2>
-      <p>这是一个低成本静态图集站。你可以把图片放到 Cloudflare R2，再把图片链接填入网站数据里。</p>
+      <p>本站用于女明星生图、活动图、红毯图、写真图集预览。请确保上传图片拥有版权或授权。</p>
     </section>
   </main>
 
-  <footer class="footer">© <span id="year"></span> 星图画廊</footer>
+  <footer class="footer">© <span id="year"></span> 女明星生图</footer>
 
   <script src="/assets/app.js"></script>
 </body>

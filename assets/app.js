@@ -36,26 +36,44 @@ const posts = [
     tags: ["舞台", "现场"]
   },
   {
-    title: "暖色调写真预览",
-    category: "写真",
-    date: "7天前",
-    count: 9,
-    cover: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=900&auto=format&fit=crop",
-    url: "/posts/sample-05.html",
-    tags: ["写真", "暖色"]
-  },
-  {
     title: "城市街拍合集",
     category: "街拍",
+    date: "7天前",
+    count: 9,
+    cover: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900&auto=format&fit=crop",
+    url: "/posts/sample-05.html",
+    tags: ["街拍", "城市"]
+  },
+  {
+    title: "暖色调写真预览",
+    category: "写真",
     date: "8天前",
     count: 7,
-    cover: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900&auto=format&fit=crop",
+    cover: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=900&auto=format&fit=crop",
     url: "/posts/sample-06.html",
-    tags: ["街拍", "城市"]
+    tags: ["写真", "暖色"]
   }
 ];
 
 let currentCategory = "全部";
+
+function renderStack() {
+  const stack = document.querySelector("#coverStack");
+  const topFive = posts.slice(0, 5);
+  stack.innerHTML = topFive.map((p, index) => `
+    <a class="stack-card c${index + 1}" href="${p.url}">
+      <img src="${p.cover}" alt="${p.title}">
+    </a>
+  `).join("") + `
+    <div class="stack-caption">
+      <div>
+        <small>前五图集封面精选</small>
+        <strong>从左到右，一张盖着一张</strong>
+      </div>
+      <span class="count">${topFive.length} 组精选</span>
+    </div>
+  `;
+}
 
 function renderStats() {
   const categories = [...new Set(posts.map(p => p.category))];
@@ -71,15 +89,14 @@ function renderFilters() {
 
   categories.forEach(cat => {
     const btn = document.createElement("button");
-    btn.className = "category-pill";
     btn.dataset.category = cat;
     btn.textContent = cat;
     wrap.appendChild(btn);
   });
 
   wrap.addEventListener("click", e => {
-    if (!e.target.matches(".category-pill")) return;
-    document.querySelectorAll(".category-pill").forEach(b => b.classList.remove("active"));
+    if (!e.target.matches("button")) return;
+    document.querySelectorAll(".cats button").forEach(b => b.classList.remove("active"));
     e.target.classList.add("active");
     currentCategory = e.target.dataset.category;
     renderPosts();
@@ -111,7 +128,6 @@ function renderPosts() {
           <span>${p.category}</span>
           <span>${p.count} 张</span>
         </div>
-        <div class="tags">${p.tags.map(t => `<span class="tag">#${t}</span>`).join("")}</div>
       </div>
     </a>
   `).join("");
@@ -134,6 +150,7 @@ searchToggle.onclick = () => {
 
 searchInput.addEventListener("input", renderPosts);
 
+renderStack();
 renderStats();
 renderFilters();
 renderPosts();
