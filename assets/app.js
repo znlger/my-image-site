@@ -2,6 +2,8 @@ let posts = [];
 let site = {};
 let currentCategory = "全部";
 
+const DEFAULT_ABOUT_TEXT = "本站用于女明星生图、活动图、红毯图、写真图集预览。请确保上传图片拥有版权或授权。";
+
 async function safeJson(url, fallback) {
   try {
     const res = await fetch(url, { cache: "no-store" });
@@ -32,6 +34,32 @@ function safeText(value) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+function applySavedTheme() {
+  const saved = localStorage.getItem("SITE_THEME") || "light";
+  document.body.classList.toggle("theme-dark", saved === "dark");
+  updateThemeButton();
+}
+
+function updateThemeButton() {
+  const btn = document.querySelector("#themeToggle");
+  if (!btn) return;
+  const isDark = document.body.classList.contains("theme-dark");
+  btn.textContent = isDark ? "亮色" : "暗色";
+  btn.setAttribute("aria-label", isDark ? "切换到亮色主题" : "切换到暗色主题");
+}
+
+function setupThemeToggle() {
+  const btn = document.querySelector("#themeToggle");
+  if (!btn) return;
+  btn.onclick = () => {
+    const nextDark = !document.body.classList.contains("theme-dark");
+    document.body.classList.toggle("theme-dark", nextDark);
+    localStorage.setItem("SITE_THEME", nextDark ? "dark" : "light");
+    updateThemeButton();
+  };
+  updateThemeButton();
 }
 
 function isValidUrl(value) {
@@ -102,6 +130,7 @@ function applySite() {
   const title1 = document.querySelector("#title1");
   const title2 = document.querySelector("#title2");
   const desc = document.querySelector("#siteDesc");
+  const aboutText = document.querySelector("#aboutText");
 
   if (brandName) brandName.textContent = siteName;
   if (footerName) footerName.textContent = siteName;
@@ -280,6 +309,7 @@ function setupSearchIfExist() {
 }
 
 async function init() {
+  applySavedTheme();
   const year = document.querySelector("#year");
   if (year) year.textContent = new Date().getFullYear();
 
@@ -291,6 +321,7 @@ async function init() {
   renderPostsIfExist();
   renderGalleryDetailIfExist();
   setupSearchIfExist();
+  setupThemeToggle();
 }
 
 init().catch(err => {

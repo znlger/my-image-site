@@ -59,6 +59,7 @@
           <div class="field"><label>首页第一行标题</label><input id="title1"></div>
           <div class="field"><label>首页第二行标题</label><input id="title2"></div>
           <div class="field"><label>首页说明文字</label><textarea id="description"></textarea></div>
+          <div class="field"><label>关于页面文字</label><textarea id="aboutTextInput" placeholder="这里写前台关于部分的介绍文字，支持换行"></textarea><p class="hint">前台点击“关于”后显示这里的内容，支持换行。</p></div>
           <p class="hint">修改后点击保存，前台网站会自动读取最新内容。</p>
         </div>
       </section>
@@ -104,14 +105,61 @@
                 <div><strong>上传/替换封面图</strong><span>会自动命名并上传到 R2</span></div>
               </div>
               <div class="preview-cover"><img id="coverPreview" src=""></div>
+              <div id="pendingCoverWrap" class="pending-cover hidden">
+                <p class="hint">封面待上传预览：可拖动主水印位置</p>
+                <canvas id="pendingCoverCanvas"></canvas>
+                <div class="btn-row">
+                  <button class="btn btn-primary" id="uploadPendingCoverBtn">确认加水印并上传封面</button>
+                  <button class="btn btn-soft" id="clearPendingCoverBtn">取消封面待上传</button>
+                </div>
+              </div>
             </div>
           </div>
+
+          <section class="watermark-box" style="margin-top:24px">
+            <div class="watermark-head">
+              <h3>上传水印设置</h3>
+              <span>暗水印统一调整，主水印每张图单独拖动位置</span>
+            </div>
+
+            <div class="watermark-grid">
+              <div class="watermark-card">
+                <label class="switch-line"><input id="wmDarkEnabled" type="checkbox" checked> 上传时添加全屏暗水印</label>
+                <div class="field"><label>暗水印文字</label><textarea id="wmDarkText">明星生图 · maimg.com
+禁止搬运 · 仅供预览</textarea><p class="hint">支持换行。</p></div>
+                <div class="field"><label>暗水印样式</label><select id="wmDarkStyle"><option value="soft">柔和浅色</option><option value="dark">深色低透明</option><option value="mixed">黑白双层</option></select></div>
+                <div class="field"><label>暗水印强度</label><input id="wmDarkOpacity" type="range" min="5" max="60" value="24"></div>
+                <div class="field"><label>暗水印大小</label><input id="wmDarkSize" type="range" min="14" max="56" value="24"></div>
+                <div class="field"><label>暗水印密度</label><input id="wmDarkDensity" type="range" min="180" max="620" value="340"></div>
+                <div class="field"><label>暗水印行距</label><input id="wmDarkLineHeight" type="range" min="0.9" max="2.2" step="0.1" value="1.35"></div>
+                <div class="field"><label>暗水印整体移动 X</label><input id="wmDarkOffsetX" type="range" min="-400" max="400" value="0"></div>
+                <div class="field"><label>暗水印整体移动 Y</label><input id="wmDarkOffsetY" type="range" min="-400" max="400" value="0"></div>
+              </div>
+
+              <div class="watermark-card">
+                <label class="switch-line"><input id="wmMainEnabled" type="checkbox" checked> 上传时添加主水印</label>
+                <div class="field"><label>主水印文字</label><textarea id="wmMainText">maimg.com
+高清生图预览</textarea><p class="hint">支持换行。</p></div>
+                <div class="field"><label>主水印样式</label><select id="wmMainStyle"><option value="white">白字描边</option><option value="dark">深色半透明</option><option value="yellow">金色醒目</option></select></div>
+                <div class="field"><label>主水印大小</label><input id="wmMainSize" type="range" min="24" max="180" value="86"></div>
+                <div class="field"><label>主水印透明度</label><input id="wmMainOpacity" type="range" min="0" max="100" value="95"></div>
+                <div class="field"><label>主水印行距</label><input id="wmMainLineHeight" type="range" min="0.9" max="2.2" step="0.1" value="1.2"></div>
+                <p class="hint">选择图片后，在预览图上拖动主水印位置。每张图片的位置可以单独调整。</p>
+              </div>
+            </div>
+          </section>
 
           <div style="margin-top:24px">
             <div class="drop">
               <input id="detailFiles" type="file" accept="image/*" multiple>
-              <div><strong>上传详情页图片，可一次选择多张</strong><span>会自动命名并上传到 R2</span></div>
+              <div><strong>选择详情页图片，可一次选择多张</strong><span>先预览水印，可单独拖动每张主水印位置，再确认上传</span></div>
             </div>
+            <div id="pendingDetailTools" class="pending-tools hidden">
+              <button class="btn btn-primary" id="uploadPendingDetailsBtn">确认加水印并上传详情图</button>
+              <button class="btn btn-soft" id="clearPendingDetailsBtn">清空待上传</button>
+            </div>
+            <div id="pendingDetailPreview" class="pending-upload-grid"></div>
+            <p class="hint">已上传图片：</p>
             <div id="detailPreview" class="image-grid"></div>
           </div>
 
