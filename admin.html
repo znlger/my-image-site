@@ -1,874 +1,176 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>正式后台保留版 · 水印设置二级页面 Demo</title>
-<style>
-*{box-sizing:border-box}
-:root{
-  --bg:#f7f4ee;
-  --ink:#07152f;
-  --muted:#667085;
-  --card:rgba(255,255,255,.90);
-  --line:rgba(7,21,47,.10);
-  --brand:#0f172a;
-  --soft:#f1e9ff;
-  --purple:#7c3aed;
-  --pink:#ff4d7d;
-  --good:#059669;
-  --danger:#ef3d67;
-  --shadow:0 24px 70px rgba(25,18,8,.10);
-}
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC",Arial,sans-serif;
-  color:var(--ink);
-  background:
-    linear-gradient(rgba(170,142,84,.08) 1px, transparent 1px),
-    linear-gradient(90deg,rgba(170,142,84,.08) 1px, transparent 1px),
-    radial-gradient(circle at 4% 0%,rgba(124,58,237,.13),transparent 30%),
-    radial-gradient(circle at 100% 0%,rgba(250,204,21,.18),transparent 28%),
-    #f8f5ef;
-  background-size:44px 44px,44px 44px,auto,auto,auto;
-}
-button,input,textarea,select{font:inherit}
-button{cursor:pointer}
-.hidden{display:none!important}
-.shell{width:min(1380px,92%);margin:0 auto}
-.topbar{
-  margin:20px auto 22px;
-  padding:16px 20px;
-  border:1px solid var(--line);
-  border-radius:999px;
-  background:rgba(255,255,255,.80);
-  box-shadow:var(--shadow);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:18px;
-  backdrop-filter:blur(18px);
-}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{
-  width:48px;height:48px;border-radius:50%;
-  background:linear-gradient(135deg,#172554,#7c3aed);
-  display:grid;place-items:center;color:#fff;font-weight:900;font-size:22px;
-  box-shadow:0 12px 26px rgba(17,24,39,.18);
-}
-.brand strong{display:block;font-size:20px}
-.brand span{display:block;font-size:11px;letter-spacing:.16em;color:#667085;text-transform:uppercase;margin-top:2px}
-.nav{display:flex;gap:10px}
-.btn{
-  border:0;
-  border-radius:999px;
-  padding:11px 16px;
-  font-weight:900;
-  background:var(--brand);
-  color:#fff;
-}
-.btn.soft{background:var(--soft);color:var(--purple)}
-.btn.light{background:#fff;color:var(--ink);border:1px solid var(--line)}
-.btn.good{background:var(--good);color:#fff}
-.btn.danger{background:rgba(239,61,103,.12);color:var(--danger)}
-.btn.gray{background:#e5e7eb;color:#111827}
-.grid{
-  display:grid;
-  grid-template-columns:310px minmax(0,1fr);
-  gap:22px;
-  align-items:start;
-}
-.panel{
-  background:rgba(255,255,255,.88);
-  border:1px solid var(--line);
-  border-radius:28px;
-  box-shadow:var(--shadow);
-  overflow:hidden;
-}
-.panel + .panel{margin-top:22px}
-.panel-head{
-  padding:20px 22px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-}
-.panel-head h2{font-size:20px;margin:0}
-.panel-body{padding:22px}
-.field{margin-bottom:16px}
-label{display:block;font-weight:900;margin-bottom:8px}
-input[type="text"],input:not([type]),input[type="file"],textarea,select{
-  width:100%;
-  border:1px solid rgba(7,21,47,.12);
-  border-radius:18px;
-  background:#fff;
-  padding:12px 14px;
-}
-textarea{min-height:90px;resize:vertical;line-height:1.55}
-.hint{font-size:13px;color:var(--muted);line-height:1.65;margin-top:7px}
-.badge{
-  display:inline-flex;align-items:center;justify-content:center;
-  border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900;
-  background:var(--soft);color:var(--purple);
-}
-.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.status-card{
-  padding:14px 16px;
-  border:1px solid var(--line);
-  border-radius:18px;
-  background:#fff;
-  min-height:72px;
-}
-.status-card strong{display:block;font-size:12px;color:#475467;margin-bottom:6px}
-.status-card span{font-weight:900;color:#059669}
-.debug-json{
-  margin-top:14px;
-  background:#101827;
-  color:#e5e7eb;
-  border-radius:18px;
-  padding:16px;
-  height:116px;
-  overflow:auto;
-  font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;
-}
-.sidebar{position:sticky;top:18px}
-.gallery-list{display:grid;gap:12px}
-.gallery-item{
-  display:grid;grid-template-columns:58px 1fr auto;gap:12px;align-items:center;
-  border:1px solid var(--line);border-radius:20px;background:#fff;padding:10px;
-}
-.gallery-item.active{border-color:rgba(124,58,237,.42);box-shadow:0 14px 30px rgba(124,58,237,.10)}
-.thumb{width:58px;height:58px;border-radius:16px;background:#eef2f7;overflow:hidden}
-.thumb img{width:100%;height:100%;object-fit:cover}
-.gallery-info strong{display:block;font-size:14px;margin-bottom:4px}
-.gallery-info span{font-size:12px;color:#667085}
-.editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.cover-box{border:1px solid var(--line);border-radius:24px;background:#f8fafc;overflow:hidden}
-.cover-box img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover}
-.cover-empty{min-height:230px;display:grid;place-items:center;color:#667085;text-align:center;padding:24px}
-.btn-row{display:flex;gap:10px;flex-wrap:wrap}
-.notice{
-  padding:14px 16px;border-radius:20px;background:rgba(124,58,237,.08);
-  color:#4c1d95;font-size:13px;line-height:1.65;margin-bottom:18px;
-}
-.images-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:26px 0 14px}
-.image-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px}
-.image-card{
-  background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;
-  box-shadow:0 10px 28px rgba(7,21,47,.06);
-}
-.image-card[draggable="true"]{cursor:grab}
-.image-card.dragging{opacity:.45}
-.image-card.selected-cover{border-color:rgba(5,150,105,.65);box-shadow:0 12px 34px rgba(5,150,105,.18)}
-.image-head{padding:10px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px}
-.image-head strong{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.image-card img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;background:#eef2f7}
-.image-actions{padding:10px 12px;display:flex;gap:8px;justify-content:space-between;border-top:1px solid var(--line)}
-.image-actions .btn{font-size:12px;padding:8px 10px}
-.empty{
-  min-height:260px;border:1px dashed var(--line);border-radius:24px;
-  display:grid;place-items:center;text-align:center;color:#667085;padding:28px;
-}
-
-/* 二级水印页面，来自之前确认的固定设置 + 预览 UI */
-.watermark-page{
-  position:fixed;inset:0;z-index:100;overflow:auto;
-  background:
-    radial-gradient(circle at 10% 0%,rgba(124,58,237,.10),transparent 30%),
-    linear-gradient(180deg,#fbf8f2,#f3f6fb);
-  padding:22px 0 42px;
-}
-.watermark-shell{width:min(1460px,94%);margin:0 auto}
-.watermark-top{
-  padding:20px 24px;border:1px solid var(--line);border-radius:28px;
-  background:rgba(255,255,255,.88);box-shadow:var(--shadow);
-  display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px;
-}
-.watermark-top h1{margin:0;font-size:26px;letter-spacing:-.04em}
-.watermark-top p{margin:6px 0 0;color:#667085;line-height:1.6}
-.watermark-layout{display:grid;grid-template-columns:430px minmax(0,1fr);gap:22px;align-items:start}
-.watermark-panel{position:sticky;top:18px;max-height:calc(100vh - 36px);overflow:auto}
-.save-box{
-  padding:14px;border:1px solid rgba(5,150,105,.22);border-radius:20px;
-  background:rgba(5,150,105,.08);margin:14px 0;
-}
-.switch{display:flex;gap:10px;align-items:center;font-weight:900;margin-bottom:12px}
-.switch input{width:20px;height:20px}
-.upload-zone{
-  border:2px dashed rgba(124,58,237,.26);border-radius:24px;
-  background:rgba(255,255,255,.60);padding:22px;text-align:center;position:relative;margin-bottom:18px;
-}
-.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
-.upload-zone strong{font-size:20px;display:block}
-.upload-zone span{display:block;color:#667085;margin-top:8px}
-.preview-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:16px}
-.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
-.preview-card{
-  background:#fff;border:1px solid var(--line);border-radius:24px;overflow:hidden;
-  box-shadow:0 12px 36px rgba(0,0,0,.08);
-}
-.preview-card-head{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
-.preview-card-head strong{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.canvas-stage{padding:12px;background:#f8fafc}
-canvas{width:100%;height:auto;display:block;border-radius:16px;background:#ddd;touch-action:none;cursor:grab}
-canvas:active{cursor:grabbing}
-.inline-tip{
-  margin:0 0 16px;padding:12px 14px;border-radius:18px;
-  background:rgba(124,58,237,.08);color:#4c1d95;font-size:13px;line-height:1.65;
-}
-.row{display:grid;grid-template-columns:1fr 74px;gap:10px;align-items:center}
-input[type="range"]{width:100%}
-.status{
-  padding:12px 14px;border-radius:18px;background:#f3f4f6;color:#374151;
-  font-size:13px;line-height:1.55;white-space:pre-wrap;
-}
-@media(max-width:1080px){
-  .grid,.watermark-layout,.editor-grid{grid-template-columns:1fr}
-  .sidebar,.watermark-panel{position:relative;top:0;max-height:none}
-  .status-grid{grid-template-columns:1fr 1fr}
-}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>后台管理 - 女明星生图</title>
+  <link rel="stylesheet" href="./assets/style.css" />
 </head>
 <body>
-
-<header class="topbar shell">
-  <div class="brand">
-    <div class="logo">女</div>
-    <div>
-      <strong>女明星生图后台</strong>
-      <span>VISUAL ADMIN</span>
+  <section id="loginCard" class="login-card">
+    <h1>后台管理</h1>
+    <p class="hint">请输入管理员密码。</p>
+    <div class="field">
+      <label>管理员密码</label>
+      <input id="passwordInput" type="password" placeholder="ADMIN_PASSWORD" />
     </div>
-  </div>
-  <div class="nav">
-    <button class="btn light">看网站</button>
-    <button class="btn">后台</button>
-  </div>
-</header>
-
-<main class="grid shell">
-  <aside class="sidebar">
-    <section class="panel">
-      <div class="panel-head">
-        <h2>网站设置</h2>
-        <button class="btn soft">保存</button>
-      </div>
-      <div class="panel-body">
-        <div class="field"><label>网站名称</label><input value="女明星生图"></div>
-        <div class="field"><label>首页第一行标题</label><input value="精选女明星生图"></div>
-        <div class="field"><label>首页第二行标题</label><input value="高清原图预览"></div>
-        <div class="field"><label>关于页面文字</label><textarea>这里填写前台关于页面展示的文字。</textarea></div>
-        <div class="hint">保持原正式后台左侧网站设置样式。</div>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="panel-head">
-        <h2>图集列表</h2>
-        <button class="btn">+ 新增</button>
-      </div>
-      <div class="panel-body">
-        <div id="galleryList" class="gallery-list"></div>
-      </div>
-    </section>
-  </aside>
-
-  <section>
-    <section class="panel">
-      <div class="panel-head">
-        <h2>后台自检</h2>
-        <div class="btn-row">
-          <button class="btn soft">检查配置</button>
-          <button class="btn">测试 R2 写入</button>
-        </div>
-      </div>
-      <div class="panel-body">
-        <div class="status-grid">
-          <div class="status-card"><strong>ADMIN_PASSWORD</strong><span>已设置</span></div>
-          <div class="status-card"><strong>R2 绑定 IMAGES</strong><span>已绑定</span></div>
-          <div class="status-card"><strong>IMAGE_BASE_URL</strong><span>https://pub-xxx.r2.dev</span></div>
-          <div class="status-card"><strong>R2 写入测试</strong><span>成功</span></div>
-        </div>
-        <pre class="debug-json">{
-  "title": "林志玲",
-  "category": "活动",
-  "date": "今天",
-  "cover": "从详情图中选择",
-  "images": []
-}</pre>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="panel-head">
-        <h2>编辑图集</h2>
-        <div class="btn-row">
-          <button class="btn danger">删除</button>
-          <button class="btn">保存图集</button>
-        </div>
-      </div>
-
-      <div class="panel-body">
-        <div class="notice">
-          这里恢复正式后台主页面：后台自检、网站设置、图集列表、编辑图集都保留。只是把“详细水印设置”移动到二级页面。
-        </div>
-
-        <div class="editor-grid">
-          <div>
-            <div class="field"><label>图集 ID</label><input value="gallery-002" disabled></div>
-            <div class="field"><label>图集标题</label><input value="林志玲"></div>
-            <div class="field"><label>分类</label><select><option>活动</option><option>写真</option><option>红毯</option></select></div>
-            <div class="field"><label>日期</label><input value="今天" disabled></div>
-            <div class="field"><label>标签</label><input value="生图"></div>
-            <div class="field"><label>购买链接</label><input placeholder="粘贴你的购买网址，例如 https://..."></div>
-
-            <div class="btn-row" style="margin-top:8px">
-              <button class="btn" id="openWatermarkBtn">进入详细水印上传</button>
-              <button class="btn soft">保留普通上传</button>
-            </div>
-            <div class="hint">只新增这个跳转按钮。主页面其他位置和功能保持不变。</div>
-          </div>
-
-          <div>
-            <label>封面图</label>
-            <div class="cover-box" id="coverBox">
-              <div class="cover-empty">封面从下方详情图中任选一张</div>
-            </div>
-            <div class="hint">不再单独上传封面图。详情图确认后，可点“设为封面”。</div>
-          </div>
-        </div>
-
-        <div class="images-head">
-          <div>
-            <h2 style="margin:0">详情页图片</h2>
-            <p class="hint" style="margin:4px 0 0">加水印后的图仍显示在原来的详情图位置；支持拖动调换顺序。</p>
-          </div>
-          <span class="badge" id="detailCount">0 张</span>
-        </div>
-
-        <section id="detailGrid" class="image-grid">
-          <div class="empty"><div>暂无详情图。进入详细水印上传后添加图片。</div></div>
-        </section>
-      </div>
-    </section>
+    <button id="loginBtn" class="btn btn-primary">进入后台</button>
+    <pre id="debugLog" class="debug-log" style="margin-top:18px"></pre>
   </section>
-</main>
 
-<section id="watermarkPage" class="watermark-page hidden">
-  <div class="watermark-shell">
-    <header class="watermark-top">
-      <div>
-        <h1>后台上传 + 水印设置</h1>
-        <p>左侧水印设置固定显示，右侧图片预览同步变化。主水印每张图单独拖动，暗水印整批统一。</p>
-      </div>
-      <div class="btn-row">
-        <button class="btn light" id="backBtn">返回主后台</button>
-        <button class="btn good" id="confirmBtn">确认加水印并返回</button>
-      </div>
+  <div id="adminApp" class="hidden">
+    <header class="site-top">
+      <a class="brand" href="./index.html">
+        <span class="brand-mark">女</span>
+        <span><strong>女明星生图后台</strong><em>Admin Console</em></span>
+      </a>
+      <nav class="top-nav">
+        <a href="./index.html">看网站</a>
+        <a href="./admin.html" class="active">后台</a>
+      </nav>
     </header>
 
-    <div class="watermark-layout">
-      <aside class="panel watermark-panel">
-        <div class="panel-body">
-          <h2>水印设置</h2>
-          <p class="inline-tip">
-            这里就是从正式后台拆出来的“详细水印设置”。只上传详情图；封面图不在这里上传，回主页面后从详情图里选择。
-          </p>
-
-          <div class="save-box">
-            <label class="switch" style="margin:0">
-              <input id="saveWatermarkSettings" type="checkbox" checked>
-              保存水印设置，应用到后面所有新增图片
-            </label>
-            <div class="hint">勾选后，下次进入本页面会自动套用当前水印设置。</div>
+    <main class="admin-layout">
+      <aside>
+        <section class="panel">
+          <div class="panel-head">
+            <h2>网站设置</h2>
           </div>
-
-          <div class="upload-zone">
-            <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/*" multiple>
-            <strong>选择详情页图片，可一次选择多张</strong>
-            <span>先预览水印，再确认返回主后台。</span>
+          <div class="panel-body">
+            <div class="field"><label>网站名称</label><input id="siteName"></div>
+            <div class="field"><label>首页第一行标题</label><input id="title1"></div>
+            <div class="field"><label>首页第二行标题</label><input id="title2"></div>
+            <div class="field"><label>首页说明文字</label><textarea id="description"></textarea></div>
+            <div class="field"><label>关于页面文字</label><textarea id="aboutText" placeholder="点击前台“关于”后展示这里的文字"></textarea></div>
+            <button id="saveSiteBtn" class="btn btn-primary">保存网站设置</button>
           </div>
+        </section>
 
-          <h3>暗水印：整批统一</h3>
-          <label class="switch">
-            <input id="darkEnabled" type="checkbox" checked>
-            上传时添加全屏暗水印
-          </label>
-
-          <div class="field">
-            <label>暗水印文字</label>
-            <textarea id="darkText">明星生图 · maimg.com
-禁止搬运 · 仅供预览</textarea>
-            <div class="hint">支持换行。调节后右侧所有图片同步变化。</div>
+        <section class="panel" style="margin-top:24px">
+          <div class="panel-head">
+            <h2>图集列表</h2>
+            <button id="addGalleryBtn" class="btn btn-soft">+ 新增</button>
           </div>
-
-          <div class="field">
-            <label>暗水印样式</label>
-            <select id="darkStyle">
-              <option value="soft">柔和浅色</option>
-              <option value="dark">深色低透明</option>
-              <option value="mixed">黑白双层</option>
-            </select>
+          <div class="panel-body">
+            <div id="galleryList" class="gallery-list"></div>
           </div>
-
-          <div class="field"><label>暗水印强度</label><div class="row"><input id="darkOpacity" type="range" min="5" max="60" value="24"><span id="darkOpacityVal"></span></div></div>
-          <div class="field"><label>暗水印大小</label><div class="row"><input id="darkSize" type="range" min="14" max="56" value="24"><span id="darkSizeVal"></span></div><div class="hint">只改变文字大小，不改变阵列位置。</div></div>
-          <div class="field"><label>暗水印密度</label><div class="row"><input id="darkDensity" type="range" min="180" max="620" value="340"><span id="darkDensityVal"></span></div></div>
-          <div class="field"><label>暗水印行距</label><div class="row"><input id="darkLineHeight" type="range" min="0.9" max="2.2" step="0.1" value="1.35"><span id="darkLineHeightVal"></span></div></div>
-          <div class="field"><label>暗水印整体移动 X</label><div class="row"><input id="darkOffsetX" type="range" min="-400" max="400" value="0"><span id="darkOffsetXVal"></span></div></div>
-          <div class="field"><label>暗水印整体移动 Y</label><div class="row"><input id="darkOffsetY" type="range" min="-400" max="400" value="0"><span id="darkOffsetYVal"></span></div></div>
-
-          <hr>
-
-          <h3>主水印：每张图单独拖动</h3>
-          <label class="switch">
-            <input id="mainEnabled" type="checkbox" checked>
-            上传时添加主水印
-          </label>
-
-          <div class="field">
-            <label>主水印文字</label>
-            <textarea id="mainText">nmxst.com</textarea>
-            <div class="hint">支持换行。位置在右侧每张图片上单独拖动。</div>
-          </div>
-
-          <div class="field">
-            <label>主水印样式</label>
-            <select id="mainStyle">
-              <option value="white">白字描边</option>
-              <option value="dark">深色半透明</option>
-              <option value="yellow">金色醒目</option>
-            </select>
-          </div>
-
-          <div class="field"><label>主水印大小</label><div class="row"><input id="mainSize" type="range" min="24" max="180" value="70"><span id="mainSizeVal"></span></div></div>
-          <div class="field"><label>主水印透明度</label><div class="row"><input id="mainOpacity" type="range" min="0" max="100" value="95"><span id="mainOpacityVal"></span></div></div>
-          <div class="field"><label>主水印行距</label><div class="row"><input id="mainLineHeight" type="range" min="0.9" max="2.2" step="0.1" value="1.2"><span id="mainLineHeightVal"></span></div></div>
-
-          <div id="status" class="status">状态：等待选择图片</div>
-        </div>
+        </section>
       </aside>
 
-      <main class="panel">
-        <div class="panel-body">
-          <div class="preview-head">
-            <div>
-              <h2 style="margin:0">上传图片与实时预览</h2>
-              <p style="margin:5px 0 0;color:#667085">图片显示在这里；左侧改水印，这里实时刷新。</p>
+      <section>
+        <section class="debug-box">
+          <div class="debug-head">
+            <h2>后台自检</h2>
+            <div class="btn-row" style="margin:0">
+              <button id="runDebugBtn" class="btn btn-soft">检查配置</button>
+              <button id="testR2Btn" class="btn btn-primary">测试 R2 写入</button>
             </div>
-            <span class="badge" id="pendingCount">0 张</span>
           </div>
+          <div class="debug-body">
+            <div class="debug-grid">
+              <div class="debug-item"><b>ADMIN_PASSWORD</b><span id="dbgPassword">未检查</span></div>
+              <div class="debug-item"><b>R2 绑定 IMAGES</b><span id="dbgImages">未检查</span></div>
+              <div class="debug-item"><b>IMAGE_BASE_URL</b><span id="dbgBaseUrl">未检查</span></div>
+              <div class="debug-item"><b>R2 写入测试</b><span id="dbgWrite">未测试</span></div>
+            </div>
+            <pre id="debugLog" class="debug-log"></pre>
+          </div>
+        </section>
 
-          <section id="previewGrid" class="preview-grid">
-            <div class="empty"><div>选择详情图后，会在这里显示水印预览。</div></div>
-          </section>
-        </div>
-      </main>
-    </div>
+        <section class="panel">
+          <div class="panel-head">
+            <h2>编辑图集</h2>
+            <div class="btn-row" style="margin:0">
+              <button id="deleteGalleryBtn" class="btn btn-danger">删除</button>
+              <button id="saveGalleryBtn" class="btn btn-primary">保存图集</button>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="editor-grid">
+              <div>
+                <div class="field"><label>图集 ID</label><input id="galleryId" disabled></div>
+                <div class="field"><label>图集标题</label><input id="galleryTitle"></div>
+                <div class="field">
+                  <label>分类</label>
+                  <select id="galleryCategory">
+                    <option>活动</option><option>写真</option><option>街拍</option><option>红毯</option><option>路透</option>
+                  </select>
+                </div>
+                <div class="field"><label>上传时间显示</label><input id="galleryDate"></div>
+                <div class="field"><label>标签</label><input id="galleryTags"><div class="hint">多个标签用英文逗号分隔。</div></div>
+                <div class="field"><label>购买链接</label><input id="buyUrl" placeholder="https://..."></div>
+                <button id="openWatermarkBtn" class="btn btn-primary" type="button">进入详细水印上传</button>
+              </div>
+              <div>
+                <div class="drop">
+                  <input id="detailFiles" type="file" accept="image/*" multiple>
+                  <div><strong>普通上传详情图</strong><span>也可以用左侧按钮进入水印上传。</span></div>
+                </div>
+                <div class="preview-cover"><img id="coverPreview" src=""></div>
+                <div class="hint">封面从详情图中选择，或保留旧封面。</div>
+              </div>
+            </div>
+
+            <div class="btn-row">
+              <button id="clearImagesBtn" class="btn btn-danger">清空详情图</button>
+              <button id="moveImageBtn" class="btn btn-soft">移动最后一张到最前</button>
+            </div>
+            <div id="detailPreview" class="image-grid"></div>
+          </div>
+        </section>
+      </section>
+    </main>
   </div>
-</section>
 
-<script>
-const $ = id => document.getElementById(id);
-const STORAGE_KEY = "maimg_corrected_watermark_split_demo_v1";
-
-let pendingItems = [];
-let savedDetails = [];
-let selectedCoverIndex = -1;
-let dragIndex = null;
-let dragCardIndex = null;
-
-const defaultSettings = {
-  saveWatermarkSettings: true,
-  darkEnabled: true,
-  darkText: "明星生图 · maimg.com\n禁止搬运 · 仅供预览",
-  darkStyle: "soft",
-  darkOpacity: "24",
-  darkSize: "24",
-  darkDensity: "340",
-  darkLineHeight: "1.35",
-  darkOffsetX: "0",
-  darkOffsetY: "0",
-  mainEnabled: true,
-  mainText: "nmxst.com",
-  mainStyle: "white",
-  mainSize: "70",
-  mainOpacity: "95",
-  mainLineHeight: "1.2"
-};
-const controls = Object.keys(defaultSettings);
-
-const galleries = [
-  {title:"古力娜扎", category:"活动", count:0},
-  {title:"新闻集标题", category:"活动", count:4},
-  {title:"赵今麦", category:"活动", count:4},
-  {title:"张婧仪", category:"活动", count:4},
-  {title:"迪丽热巴", category:"活动", count:4},
-  {title:"黄圣依", category:"活动", count:4},
-  {title:"林志玲", category:"活动", count:8}
-];
-
-function renderGalleryList(){
-  $("galleryList").innerHTML = galleries.map((g,i)=>`
-    <div class="gallery-item ${i===3?"active":""}">
-      <div class="thumb">${i===3 && selectedCoverIndex >= 0 ? `<img src="${savedDetails[selectedCoverIndex]}">` : ""}</div>
-      <div class="gallery-info"><strong>${escapeHtml(g.title)}</strong><span>${g.category} · 今天 · ${i===3 ? savedDetails.length : g.count} 张</span></div>
-      <span class="badge">拖动</span>
-    </div>
-  `).join("");
-}
-
-$("openWatermarkBtn").onclick = () => {
-  loadSavedSettings();
-  $("watermarkPage").classList.remove("hidden");
-  setStatus("已进入详细水印上传页面。请选择详情图。");
-};
-$("backBtn").onclick = () => $("watermarkPage").classList.add("hidden");
-$("confirmBtn").onclick = confirmAndBack;
-$("fileInput").onchange = e => addFiles(e.target.files);
-
-function setStatus(text){ $("status").textContent = "状态：" + text; }
-
-function bindRange(id, suffix = ""){
-  const input=$(id), val=$(id+"Val");
-  const update=()=> val.textContent=input.value+suffix;
-  input.addEventListener("input",()=>{update();renderAll();saveSettingsIfNeeded();});
-  update();
-}
-[
-  ["darkOpacity","%"],["darkSize","px"],["darkDensity","px"],["darkLineHeight",""],
-  ["darkOffsetX","px"],["darkOffsetY","px"],["mainSize","px"],["mainOpacity","%"],["mainLineHeight",""]
-].forEach(([id,s])=>bindRange(id,s));
-
-controls.forEach(id=>{
-  const el=$(id);
-  if(!el) return;
-  el.addEventListener("input",()=>{renderAll();saveSettingsIfNeeded();});
-  el.addEventListener("change",()=>{renderAll();saveSettingsIfNeeded();});
-});
-
-function loadSavedSettings(){
-  let saved=null;
-  try{saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null")}catch{}
-  applySettings(saved || defaultSettings);
-}
-function collectSettings(){
-  const data={};
-  controls.forEach(id=>{
-    const el=$(id);
-    if(!el) return;
-    data[id]=el.type==="checkbox"?el.checked:el.value;
-  });
-  return data;
-}
-function applySettings(data){
-  const merged={...defaultSettings,...(data||{})};
-  controls.forEach(id=>{
-    const el=$(id);
-    if(!el) return;
-    if(el.type==="checkbox") el.checked=Boolean(merged[id]);
-    else el.value=merged[id];
-  });
-  updateRangeLabels();
-}
-function saveSettingsIfNeeded(){
-  if(!$("saveWatermarkSettings").checked) return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(collectSettings()));
-}
-function updateRangeLabels(){
-  [["darkOpacity","%"],["darkSize","px"],["darkDensity","px"],["darkLineHeight",""],["darkOffsetX","px"],["darkOffsetY","px"],["mainSize","px"],["mainOpacity","%"],["mainLineHeight",""]].forEach(([id,s])=>{
-    const input=$(id), val=$(id+"Val");
-    if(input && val) val.textContent=input.value+s;
-  });
-}
-
-async function addFiles(fileList){
-  const files = Array.from(fileList || []).filter(f=>f.type.startsWith("image/"));
-  if(!files.length){ setStatus("没有选择图片。"); return; }
-
-  for(const file of files){
-    const img = await readImage(file);
-    pendingItems.push({
-      file,
-      img,
-      pos:{x:.5,y:.56},
-      canvas:null
-    });
-  }
-
-  $("pendingCount").textContent = `${pendingItems.length} 张`;
-  renderPreviewCards();
-  setStatus(`已添加 ${files.length} 张详情图。`);
-  $("fileInput").value = "";
-}
-function readImage(file){
-  return new Promise((resolve,reject)=>{
-    const reader=new FileReader();
-    reader.onload=()=>{
-      const img=new Image();
-      img.onload=()=>resolve(img);
-      img.onerror=reject;
-      img.src=reader.result;
-    };
-    reader.onerror=reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-function renderPreviewCards(){
-  if(!pendingItems.length){
-    $("previewGrid").innerHTML = `<div class="empty"><div>选择详情图后，会在这里显示水印预览。</div></div>`;
-    return;
-  }
-
-  $("previewGrid").innerHTML = pendingItems.map((item,i)=>`
-    <div class="preview-card">
-      <div class="preview-card-head">
-        <strong>详情 · ${escapeHtml(item.file.name)}</strong>
-        <span class="badge">可拖水印</span>
-      </div>
-      <div class="canvas-stage">
-        <canvas data-index="${i}"></canvas>
-        <div class="hint">拖动主水印，只影响这一张。</div>
-      </div>
-    </div>
-  `).join("");
-
-  document.querySelectorAll("#previewGrid canvas").forEach(canvas=>{
-    canvas.onpointerdown = onPointerDown;
-    canvas.onpointermove = onPointerMove;
-    canvas.onpointerup = onPointerUp;
-    canvas.onpointerleave = onPointerUp;
-  });
-
-  renderAll();
-}
-function onPointerDown(e){
-  if(!$("mainEnabled").checked) return;
-  dragIndex = Number(e.currentTarget.dataset.index);
-  updateMainPos(e);
-  e.currentTarget.setPointerCapture(e.pointerId);
-}
-function onPointerMove(e){
-  if(dragIndex === null) return;
-  updateMainPos(e);
-}
-function onPointerUp(){ dragIndex = null; }
-function updateMainPos(e){
-  const i=Number(e.currentTarget.dataset.index);
-  const item=pendingItems[i];
-  if(!item) return;
-  const rect=e.currentTarget.getBoundingClientRect();
-  item.pos.x=Math.max(.02,Math.min(.98,(e.clientX-rect.left)/rect.width));
-  item.pos.y=Math.max(.02,Math.min(.98,(e.clientY-rect.top)/rect.height));
-  renderOne(i);
-}
-function renderAll(){ pendingItems.forEach((_,i)=>renderOne(i)); }
-function renderOne(i){
-  const item=pendingItems[i];
-  const canvas=document.querySelector(`#previewGrid canvas[data-index="${i}"]`);
-  if(!item || !canvas) return;
-  item.canvas=canvas;
-  const ctx=canvas.getContext("2d");
-  const maxW=900;
-  const scale=Math.min(1,maxW/item.img.naturalWidth);
-  const w=Math.round(item.img.naturalWidth*scale);
-  const h=Math.round(item.img.naturalHeight*scale);
-  canvas.width=w; canvas.height=h;
-  ctx.clearRect(0,0,w,h);
-  ctx.drawImage(item.img,0,0,w,h);
-  if($("darkEnabled").checked) drawDark(ctx,w,h);
-  if($("mainEnabled").checked) drawMain(ctx,w,h,item.pos);
-}
-
-function confirmAndBack(){
-  if(!pendingItems.length){
-    setStatus("没有待确认图片。");
-    return;
-  }
-  saveSettingsIfNeeded();
-
-  pendingItems.forEach(item=>{
-    const dataUrl=item.canvas.toDataURL("image/jpeg", .92);
-    savedDetails.push(dataUrl);
-  });
-
-  if(selectedCoverIndex < 0 && savedDetails.length > 0){
-    selectedCoverIndex = 0;
-  }
-
-  const added = pendingItems.length;
-  pendingItems = [];
-  $("pendingCount").textContent = "0 张";
-  renderPreviewCards();
-  renderMainImages();
-  $("watermarkPage").classList.add("hidden");
-
-  alert(`${added} 张详情图已加水印并回到正式后台。封面可从详情图里任选。`);
-}
-
-function renderMainImages(){
-  const coverBox=$("coverBox");
-  coverBox.innerHTML = selectedCoverIndex >= 0 && savedDetails[selectedCoverIndex]
-    ? `<img src="${savedDetails[selectedCoverIndex]}" alt="">`
-    : `<div class="cover-empty">封面从下方详情图中任选一张</div>`;
-
-  $("detailCount").textContent = `${savedDetails.length} 张`;
-  if(!savedDetails.length){
-    $("detailGrid").innerHTML = `<div class="empty"><div>暂无详情图。进入详细水印上传后添加图片。</div></div>`;
-  }else{
-    $("detailGrid").innerHTML = savedDetails.map((src,i)=>`
-      <div class="image-card ${i===selectedCoverIndex?"selected-cover":""}" draggable="true" data-index="${i}">
-        <div class="image-head">
-          <strong>详情图 ${i+1}</strong>
-          <span class="badge">${i===selectedCoverIndex?"当前封面":"拖动排序"}</span>
+  <section id="watermarkPage" class="hidden watermark-page">
+    <div class="watermark-wrap">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>详细水印上传</h2>
+          <div class="btn-row" style="margin:0">
+            <button id="closeWatermarkBtn" class="btn btn-soft" type="button">返回后台</button>
+            <button id="confirmWatermarkBtn" class="btn btn-primary" type="button">确认上传并返回</button>
+          </div>
         </div>
-        <img src="${src}" alt="">
-        <div class="image-actions">
-          <button class="btn soft" data-cover="${i}">设为封面</button>
-          <button class="btn danger" data-delete="${i}">删除</button>
+        <div class="panel-body watermark-layout">
+          <aside>
+            <div class="drop">
+              <input id="watermarkFiles" type="file" accept="image/*" multiple>
+              <div><strong>选择详情页图片</strong><span>只上传详情图；封面从详情图中选择。</span></div>
+            </div>
+
+            <div class="field"><label><input id="saveWatermarkSettings" type="checkbox" checked> 保存水印设置，应用到后续新增图片</label></div>
+
+            <h3>暗水印</h3>
+            <div class="field"><label><input id="darkEnabled" type="checkbox" checked> 开启暗水印</label></div>
+            <div class="field"><label>暗水印文字</label><textarea id="darkText">明星生图 · maimg.com
+禁止搬运 · 仅供预览</textarea></div>
+            <div class="field"><label>暗水印样式</label><select id="darkStyle"><option value="soft">柔和浅色</option><option value="dark">深色低透明</option><option value="mixed">黑白双层</option></select></div>
+            <div class="field"><label>暗水印强度</label><input id="darkOpacity" type="range" min="5" max="60" value="24"></div>
+            <div class="field"><label>暗水印大小</label><input id="darkSize" type="range" min="14" max="56" value="24"></div>
+            <div class="field"><label>暗水印密度</label><input id="darkDensity" type="range" min="180" max="620" value="340"></div>
+            <div class="field"><label>暗水印行距</label><input id="darkLineHeight" type="range" min="0.9" max="2.2" step="0.1" value="1.35"></div>
+            <div class="field"><label>暗水印整体移动 X</label><input id="darkOffsetX" type="range" min="-400" max="400" value="0"></div>
+            <div class="field"><label>暗水印整体移动 Y</label><input id="darkOffsetY" type="range" min="-400" max="400" value="0"></div>
+
+            <h3>主水印</h3>
+            <div class="field"><label><input id="mainEnabled" type="checkbox" checked> 开启主水印</label></div>
+            <div class="field"><label>主水印文字</label><textarea id="mainText">nmxst.com</textarea></div>
+            <div class="field"><label>主水印样式</label><select id="mainStyle"><option value="white">白字描边</option><option value="dark">深色半透明</option><option value="yellow">金色醒目</option></select></div>
+            <div class="field"><label>主水印大小</label><input id="mainSize" type="range" min="24" max="180" value="70"></div>
+            <div class="field"><label>主水印透明度</label><input id="mainOpacity" type="range" min="0" max="100" value="95"></div>
+            <div class="field"><label>主水印行距</label><input id="mainLineHeight" type="range" min="0.9" max="2.2" step="0.1" value="1.2"></div>
+          </aside>
+          <main>
+            <p class="hint">右侧预览会实时更新。主水印可在每张图上单独拖动。</p>
+            <div id="watermarkPreviewGrid" class="watermark-preview-grid"></div>
+          </main>
         </div>
       </div>
-    `).join("");
+    </div>
+  </section>
 
-    document.querySelectorAll("[data-cover]").forEach(btn=>{
-      btn.onclick=()=>{selectedCoverIndex=Number(btn.dataset.cover);renderMainImages();};
-    });
-    document.querySelectorAll("[data-delete]").forEach(btn=>{
-      btn.onclick=()=>deleteDetail(Number(btn.dataset.delete));
-    });
-
-    document.querySelectorAll(".image-card").forEach(card=>{
-      card.ondragstart = () => {
-        dragCardIndex = Number(card.dataset.index);
-        card.classList.add("dragging");
-      };
-      card.ondragend = () => card.classList.remove("dragging");
-      card.ondragover = e => e.preventDefault();
-      card.ondrop = e => {
-        e.preventDefault();
-        const target = Number(card.dataset.index);
-        reorderDetails(dragCardIndex, target);
-      };
-    });
-  }
-
-  renderGalleryList();
-}
-function deleteDetail(index){
-  savedDetails.splice(index,1);
-  if(selectedCoverIndex === index) selectedCoverIndex = savedDetails.length ? 0 : -1;
-  else if(selectedCoverIndex > index) selectedCoverIndex--;
-  renderMainImages();
-}
-function reorderDetails(from,to){
-  if(from === null || from === to) return;
-  const moved=savedDetails.splice(from,1)[0];
-  savedDetails.splice(to,0,moved);
-
-  if(selectedCoverIndex === from) selectedCoverIndex = to;
-  else if(from < selectedCoverIndex && to >= selectedCoverIndex) selectedCoverIndex--;
-  else if(from > selectedCoverIndex && to <= selectedCoverIndex) selectedCoverIndex++;
-
-  dragCardIndex=null;
-  renderMainImages();
-}
-
-function getLines(text){
-  return String(text||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-}
-function drawMultilineText(ctx,lines,x,y,lineHeightPx,drawLine){
-  const startY=y-((lines.length-1)*lineHeightPx)/2;
-  lines.forEach((line,i)=>drawLine(line,x,startY+i*lineHeightPx));
-}
-function drawDark(ctx,w,h){
-  const lines=getLines($("darkText").value); if(!lines.length) return;
-  const style=$("darkStyle").value;
-  const opacity=Number($("darkOpacity").value)/100;
-  const size=Number($("darkSize").value);
-  const step=Number($("darkDensity").value);
-  const lineHeightPx=size*Number($("darkLineHeight").value);
-  const ox=Number($("darkOffsetX").value);
-  const oy=Number($("darkOffsetY").value);
-
-  ctx.save();
-  ctx.translate(w/2,h/2);
-  ctx.rotate(-32*Math.PI/180);
-  ctx.translate(-w/2+ox,-h/2+oy);
-  ctx.font=`700 ${size}px "Microsoft YaHei",Arial,sans-serif`;
-  ctx.textAlign="center";
-  ctx.textBaseline="middle";
-  const stepX=step;
-  const stepY=Math.max(step*.55,70);
-  for(let y=-h-stepY*2;y<=h*2+stepY*2;y+=stepY){
-    for(let x=-w-stepX*2;x<=w*2+stepX*2;x+=stepX){
-      if(style==="soft") drawSoft(ctx,lines,x,y,lineHeightPx,size,opacity,"255,255,255");
-      else if(style==="dark") drawSoft(ctx,lines,x,y,lineHeightPx,size,opacity,"0,0,0");
-      else drawMixed(ctx,lines,x,y,lineHeightPx,size,opacity);
-    }
-  }
-  ctx.restore();
-}
-function drawSoft(ctx,lines,x,y,lineHeightPx,size,opacity,rgb){
-  ctx.save();
-  ctx.lineWidth=Math.max(1,size/18);
-  ctx.strokeStyle=`rgba(0,0,0,${opacity*.18})`;
-  ctx.fillStyle=`rgba(${rgb},${opacity})`;
-  drawMultilineText(ctx,lines,x,y,lineHeightPx,(line,tx,ty)=>{ctx.strokeText(line,tx,ty);ctx.fillText(line,tx,ty);});
-  ctx.restore();
-}
-function drawMixed(ctx,lines,x,y,lineHeightPx,size,opacity){
-  ctx.save();
-  ctx.lineWidth=Math.max(1,size/20);
-  ctx.strokeStyle=`rgba(255,255,255,${opacity*.68})`;
-  ctx.fillStyle=`rgba(0,0,0,${opacity*.72})`;
-  drawMultilineText(ctx,lines,x,y,lineHeightPx,(line,tx,ty)=>{ctx.strokeText(line,tx,ty);ctx.fillText(line,tx,ty);});
-  ctx.restore();
-}
-function drawMain(ctx,w,h,pos){
-  const lines=getLines($("mainText").value); if(!lines.length) return;
-  const size=Number($("mainSize").value);
-  const opacity=Number($("mainOpacity").value)/100;
-  const style=$("mainStyle").value;
-  const lineHeightPx=size*Number($("mainLineHeight").value);
-  const x=pos.x*w;
-  const y=pos.y*h;
-  ctx.save();
-  ctx.font=`900 ${size}px Arial,"Microsoft YaHei",sans-serif`;
-  ctx.textAlign="center";
-  ctx.textBaseline="middle";
-  const stroke=Math.max(2,Math.round(size/20));
-
-  if(style==="white"){
-    ctx.shadowColor=`rgba(0,0,0,${.45*opacity})`;
-    ctx.shadowBlur=Math.max(2,size/16);
-    ctx.shadowOffsetX=Math.max(1,size/22);
-    ctx.shadowOffsetY=Math.max(1,size/22);
-    ctx.lineWidth=stroke;
-    ctx.strokeStyle=`rgba(255,255,255,${opacity})`;
-    ctx.fillStyle=`rgba(255,255,255,${opacity})`;
-    drawMultilineText(ctx,lines,x,y,lineHeightPx,(line,tx,ty)=>{ctx.strokeText(line,tx,ty);ctx.fillText(line,tx,ty);});
-  }else if(style==="dark"){
-    drawMultilineText(ctx,lines,x,y,lineHeightPx,(line,tx,ty)=>{
-      ctx.fillStyle=`rgba(0,0,0,${.58*opacity})`;ctx.fillText(line,tx+2,ty+2);
-      ctx.fillStyle=`rgba(255,255,255,${.78*opacity})`;ctx.fillText(line,tx,ty);
-    });
-  }else{
-    ctx.shadowColor=`rgba(0,0,0,${.35*opacity})`;
-    ctx.shadowBlur=Math.max(2,size/18);
-    ctx.lineWidth=stroke;
-    ctx.strokeStyle=`rgba(75,45,0,${.55*opacity})`;
-    ctx.fillStyle=`rgba(255,205,70,${opacity})`;
-    drawMultilineText(ctx,lines,x,y,lineHeightPx,(line,tx,ty)=>{ctx.strokeText(line,tx,ty);ctx.fillText(line,tx,ty);});
-  }
-  ctx.restore();
-}
-
-function escapeHtml(v){return String(v||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
-renderGalleryList();
-renderMainImages();
-loadSavedSettings();
-updateRangeLabels();
-</script>
+  <div id="toast" class="toast"></div>
+  <script src="./assets/admin-live.js"></script>
 </body>
 </html>
