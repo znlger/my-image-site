@@ -15,7 +15,29 @@ function setStatus(text){const el=$("status"); if(el) el.textContent="状态："
 function setDebug(id,text,ok){const el=$(id); if(!el)return; el.textContent=text; el.style.color=ok===true?"#059669":ok===false?"#e11d48":"#b45309"}
 async function apiJson(url, options={}){const headers=options.headers||{}; headers["x-admin-password"]=adminPassword; if(options.body && !(options.body instanceof FormData)) headers["content-type"]="application/json"; const res=await fetch(url,{...options,headers}); const text=await res.text(); let data; try{data=text?JSON.parse(text):{}}catch{data={raw:text}} if(!res.ok) throw new Error(data.error||data.message||text||`HTTP ${res.status}`); return data}
 
-async function login(){adminPassword=$("passwordInput").value.trim(); if(!adminPassword)return toast("请输入管理员密码"); sessionStorage.setItem("ADMIN_PASSWORD",adminPassword); try{await loadAll(); $("loginCard").classList.add("hidden"); $("adminApp").classList.remove("hidden"); await runDebug(); toast("登录成功")}catch(err){logDebug("登录或加载失败：\n"+err.message); toast("登录失败："+err.message)}}
+async function login(){
+  adminPassword = $("passwordInput").value.trim();
+  if (!adminPassword) return toast("请输入管理员密码");
+
+  try {
+    // 先调用受密码保护的后台自检接口验证密码。
+    // 密码错误会返回 401，不能进入后台。
+    await apiJson("./api/debug");
+
+    sessionStorage.setItem("ADMIN_PASSWORD", adminPassword);
+    await loadAll();
+
+    $("loginCard").classList.add("hidden");
+    $("adminApp").classList.remove("hidden");
+    await runDebug();
+    toast("登录成功");
+  } catch (err) {
+    sessionStorage.removeItem("ADMIN_PASSWORD");
+    adminPassword = "";
+    logDebug("登录失败：密码错误，或当前部署环境没有配置 ADMIN_PASSWORD / R2 绑定。\n" + err.message);
+    toast("登录失败：请检查密码或 Cloudflare 环境变量");
+  }
+}
 async function loadAll(){site=await apiJson("./api/site"); galleries=await apiJson("./api/galleries"); if(!Array.isArray(galleries)) galleries=[]; if(!galleries.length)addGallery(false); fillSite(); selectGallery(0)}
 function fillSite(){ $("siteName").value=site.siteName||"女明星生图"; $("title1").value=site.title1||"精选女明星生图"; $("title2").value=site.title2||"高清原图预览"; $("description").value=site.description||""; $("aboutText").value=site.aboutText||"" }
 async function saveSite(){try{site={siteName:$("siteName").value.trim(),title1:$("title1").value.trim(),title2:$("title2").value.trim(),description:$("description").value.trim(),aboutText:$("aboutText").value.trim()}; const r=await apiJson("./api/site",{method:"POST",body:JSON.stringify(site)}); logDebug({action:"saveSite",result:r}); toast("网站设置已保存")}catch(err){logDebug("保存网站设置失败：\n"+err.message); toast("保存失败："+err.message)}}
