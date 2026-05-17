@@ -54,8 +54,8 @@ function renderStackIfExist() {
   `).join("") + `
     <div class="stack-caption">
       <div>
-        <small>前五图集封面精选</small>
-        <strong>从左到右，一张盖着一张</strong>
+        <small>最新图集封面精选</small>
+        <strong>高清生图，持续更新</strong>
       </div>
       <span class="count">${topFive.length} 组精选</span>
     </div>
